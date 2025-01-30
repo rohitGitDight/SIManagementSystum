@@ -150,6 +150,15 @@
                     </select>
                 </div>
             </div>
+
+            <!-- Course Start Date -->
+            <div class="col-xs-12 col-sm-12 col-md-6">
+                <div class="form-group">
+                    <strong>Course Start Date:</strong>
+                    <input type="date" name="course_start_date" class="form-control" value="{{ old('course_start_date') }}">
+                </div>
+            </div>
+            
             <div class="col-xs-12 col-sm-12 col-md-6">
                 <div class="form-group">
                     <strong>Fee:</strong>
@@ -183,26 +192,6 @@
         document.getElementById('course-select').addEventListener('change', function() {
             var courseId = this.value;
 
-            // if (courseId) {
-            //     // Fetch batches for the selected course using AJAX
-            //     fetch(`/get-batches/${courseId}`)
-            //         .then(response => response.json())
-            //         .then(data => {
-            //             var batchSelect = document.getElementById('student-batch-select');
-            //             batchSelect.innerHTML = '<option value="">Select Batch</option>'; // Reset batch options
-            //             data.batches.forEach(function(batch) {
-            //                 var option = document.createElement('option');
-            //                 option.value = batch.id;
-            //                 option.textContent = batch.batch_name;
-            //                 batchSelect.appendChild(option);
-            //             });
-            //         })
-            //         .catch(error => console.error('Error fetching batches:', error));
-            // } else {
-            //     // Clear the batch dropdown if no course is selected
-            //     document.getElementById('student-batch-select').innerHTML = '<option value="">Select Batch</option>';
-            // }
-
             if (courseId) {
                 // Fetch batches for the selected course using AJAX
                 fetch(`/get-batches/${courseId}`)
@@ -226,8 +215,9 @@
                         var professorSelect = document.getElementById('student-professor-select');
                         professorSelect.innerHTML = '<option value="">Select Professor</option>'; // Reset professor options
                         data.professors.forEach(function(professor) {
+                            console.log(professor);
                             var option = document.createElement('option');
-                            option.value = professor.id;
+                            option.value = professor.user_name.id;
                             option.textContent = professor.user_name.name;
                             professorSelect.appendChild(option);
                         });

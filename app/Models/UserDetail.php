@@ -28,6 +28,7 @@ class UserDetail extends Model
         'batch_professor',
         'fee',
         'aadhaar_card_number',
+        'course_start_date',
     ];
 
     public function user()

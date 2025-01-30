@@ -83,18 +83,28 @@
                             </div>
                             <div class="form-group">
                                 <strong>Course:</strong>
-                                <p>{{ $user->details->course ?? 'N/A' }}</p>
+                                @foreach ($slectedCourse as $course)
+                                    <p>{{ $course->name_of_course ?? 'N/A' }}</p>
+                                @endforeach
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <strong>Batch:</strong>
-                                <p>{{ $user->details->student_batch ?? 'N/A' }}</p>
+                                @foreach ($courseBatch as $batch)
+                                    <p>{{ $batch->batch_name ?? 'N/A' }}</p>
+                                @endforeach
                             </div>
                             <div class="form-group">
                                 <strong>Professor:</strong>
-                                <p>{{ $user->details->batch_professor ?? 'N/A' }}</p>
+                                @foreach ($proffesors as $proffesor)
+                                    <p>{{ $proffesor->userName->name ?? 'N/A' }}</p>
+                                @endforeach
                             </div>
+                            <div class="form-group">
+                                <strong>Course Start Date:</strong>
+                                <p>{{ $user->details->course_start_date ? \Carbon\Carbon::parse($user->details->course_start_date)->format('d-m-Y') : 'N/A' }}</p>
+                            </div>                            
                             <div class="form-group">
                                 <strong>Fee:</strong>
                                 <p>{{ $user->details->fee ? '₹' . number_format($user->details->fee, 2) : 'N/A' }}</p>

@@ -14,6 +14,9 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use App\Models\Course;
 use App\Models\Batch; // Assuming you have a Batch model
+use Carbon\Carbon;
+use App\Models\StudentCourseFee;
+
 
 class StudentController extends Controller
 {
@@ -73,6 +76,7 @@ class StudentController extends Controller
             'batch_professor' => 'nullable|string|max:255',
             'fee' => 'nullable|numeric',
             'aadhaar_card_number' => 'nullable|string|max:16|unique:user_details,aadhaar_card_number',
+            'course_start_date' => 'nullable|date'
         ]);
 
 
@@ -115,13 +119,17 @@ class StudentController extends Controller
             'student_batch',
             'batch_professor',
             'fee',
-            'aadhaar_card_number'
+            'aadhaar_card_number',
+            'course_start_date'
         ]);
         $userDetailsData['user_id'] = $user->id;
         $userDetailsData['image'] = $new_name;
         
         // Use DB facade to insert data
         \DB::table('user_details')->insert($userDetailsData);
+
+        // Call getInstallmentDates() after inserting user details
+        $this->getInstallmentDates($user);
 
         // Redirect with success message
         return redirect()->route('students.index')
@@ -139,8 +147,19 @@ class StudentController extends Controller
     public function show($id): View{
         // Retrieve the user along with their details using Eloquent's `with` method.
         $user = User::with('details')->findOrFail($id);
+        $userDetail = UserDetail::where('user_id', $id)->firstOrFail();
 
-        return view('students.show', compact('user'));
+        $courseId = $userDetail->course;
+        $studentBatch = $userDetail->student_batch;
+        
+        // Fetch courses from the 'courses' table
+        $slectedCourse = Course::where('id',$courseId)->get();
+
+        $courseBatch = Batch::where('id' , $studentBatch)->get();
+
+        $proffesors = Model_has_role::whereIn('role_id', [3])->where('model_id' , $userDetail->batch_professor )->with("userName", "userDetail")->get();
+
+        return view('students.show', compact('user', 'slectedCourse' , 'courseBatch' , 'proffesors'));
     }
 
 
@@ -162,8 +181,10 @@ class StudentController extends Controller
 
         $courseBatch = Batch::where('course_id',$courseId)->get();
 
+        $proffesors = Model_has_role::whereIn('role_id', [3])->with("userName", "userDetail")->get();
+
         // Pass the user and courses to the view
-        return view('students.edit', compact('user', 'courses','courseBatch'));
+        return view('students.edit', compact('user', 'courses','courseBatch' , 'proffesors'));
     }
 
 
@@ -197,6 +218,7 @@ class StudentController extends Controller
             'batch_professor' => 'nullable|string|max:255',
             'fee' => 'nullable|numeric',
             'aadhaar_card_number' => 'nullable|string|max:16|unique:user_details,aadhaar_card_number,' . $id . ',user_id',
+            'course_start_date' => 'nullable|date'
         ]);
 
         // Update the users table
@@ -226,6 +248,7 @@ class StudentController extends Controller
                 'batch_professor' => $request->batch_professor,
                 'fee' => $request->fee,
                 'aadhaar_card_number' => $request->aadhaar_card_number,
+                'course_start_date' => $request->course_start_date,
                 'updated_at' => now(),
             ]);
 
@@ -276,6 +299,52 @@ class StudentController extends Controller
         $professors = UserDetail::whereIn("user_id", $data1)->where('course',$courseId)->with('userName')->get();  // Example query
         return response()->json(['professors' => $professors]);
 
+    }
+
+    public function getInstallmentDates($userId)
+    {
+        $user_id = $userId->id;
+        // Get user details
+        $userDetail = UserDetail::where('user_id', $user_id)->firstOrFail();
+        
+        // Get course details
+        $course = Course::where('id', $userDetail->course)->first();
+
+        if (!$course || !$userDetail->course_start_date || !$userDetail->fee) {
+           
+            return ['error' => 'Course, course start date, or fee not found'];
+        }
+        
+        // Convert to Carbon instance
+        $startDate = Carbon::parse($userDetail->course_start_date);
+        
+        // Installment logic
+        $duration = $course->duration; // e.g., 60 days
+        $installmentCycle = $course->installment_cycle; // e.g., 3
+        $paymentAmount = $userDetail->fee / $installmentCycle; // e.g., 30000 / 3 = 10000
+
+        $intervalDays = $duration / $installmentCycle; // 60 / 3 = 20 days
+        
+        // Generate installment details
+        $installments = [];
+        for ($i = 0; $i < $installmentCycle; $i++) {
+            $installments[] = [
+                'payment' => round($paymentAmount, 2),
+                'payment_date' => $startDate->copy()->addDays($intervalDays * $i)->format('Y-m-d'),
+                'payment_status' => 0 // Default status
+            ];
+        }
+        $courseFee = $userDetail->fee;
+        // Save to StudentCourseFee model
+        StudentCourseFee::Create([
+            'user_id' => $user_id, // Find by user_id
+            'course_id' => $course->id,
+            'course_fee' => $courseFee , 
+            'remaining_amount' => $courseFee , 
+            'payment_details' => json_encode($installments)] // Save as JSON
+        );
+
+        return ['message' => 'Payment details saved successfully', 'data' => $installments];
     }
 
 }

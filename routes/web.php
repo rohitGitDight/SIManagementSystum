@@ -6,9 +6,9 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\BatchController;
 use App\Http\Controllers\CoursesController;
-use App\Http\Controllers\CourseFeeController;
-use App\Http\Controllers\FeeTransactionController;
 use App\Http\Controllers\ProffessorContoller;
+use App\Http\Controllers\StudentFeeTransactionController;
+use App\Http\Controllers\StudentCourseFeeController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -36,22 +36,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('courses', CoursesController::class);
 
-    Route::resource('course_fees', CourseFeeController::class);
-    
     // routes/web.php
-    Route::get('/get-course-details/{studentId}', [CourseFeeController::class, 'getCourseDetails']);
-
-    // routes/web.php
-
-    Route::get('/fee/transactions/create', [FeeTransactionController::class, 'create'])->name('fee_transactions.create');
-    Route::post('/fee/transactions', [FeeTransactionController::class, 'store'])->name('fee_transactions.store');
-
-
-    Route::get('/fee/transactions', [FeeTransactionController::class, 'index'])->name('fee_transactions.index');
-
-    Route::delete('/fee_transactions/{id}', [FeeTransactionController::class, 'destroy'])->name('fee_transactions.destroy');
-    
-    Route::get('/fee_transactions/{id}', [FeeTransactionController::class, 'show'])->name('fee_transactions.show');
 
     Route::resource('proffessors', ProffessorContoller::class);
 
@@ -61,8 +46,13 @@ Route::middleware('auth')->group(function () {
 
 
     Route::get('/professors', [ProfessorController::class, 'index'])->name('professors.index');
+    
+    Route::get('/student_fee_transactions', [StudentFeeTransactionController::class, 'index'])->name('student_fee_transactions.index');
+    Route::get('/student_fee_transactions/create', [StudentFeeTransactionController::class, 'create'])->name('student_fee_transactions.create');
+    Route::post('/student_fee_transactions/store', [StudentFeeTransactionController::class, 'store'])->name('student_fee_transactions.store');
 
-
+    Route::get('/student-course-fees', [StudentCourseFeeController::class, 'index'])->name('student_course_fees.index');
+    
 });
 
 require __DIR__ . '/auth.php';

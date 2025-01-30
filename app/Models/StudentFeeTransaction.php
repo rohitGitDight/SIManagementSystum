@@ -1,23 +1,16 @@
 <?php
 
-// app/Models/FeeTransaction.php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Carbon\Carbon;
 
-class FeeTransaction extends Model
-{
+class StudentFeeTransaction extends Model {
     use HasFactory;
 
-    protected $casts = [
-        'payment_date' => 'datetime', // Cast payment_date to Carbon instance
-    ];
-
     protected $fillable = [
-        'student_id',
+        'user_id',
+        'course_id',
         'transaction_type',
         'transaction_id',
         'cheque_number',
@@ -27,8 +20,11 @@ class FeeTransaction extends Model
         'payment_date'
     ];
 
-    public function student()
-    {
-        return $this->belongsTo(Student::class);
+    public function student() {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function course() {
+        return $this->belongsTo(Course::class);
     }
 }

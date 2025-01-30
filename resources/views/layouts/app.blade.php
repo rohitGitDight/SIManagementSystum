@@ -228,25 +228,26 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('course_fees.index') }}">
-                                <i class="fas fa-layer-group"></i>
-                                <p>Course Fee Management</p>
-                                {{-- <span class="badge badge-success">4</span> --}}
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('fee_transactions.index') }}">
-                                <i class="fas fa-money-check-alt"></i> <!-- You can change the icon here -->
-                                <p>Fee Transaction Management</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
                             <a href="{{ route('proffessors.index') }}">
                                 <i class="fas fa-layer-group"></i>
                                 <p>Professor Managment</p>
                                 {{-- <span class="badge badge-success">4</span> --}}
                             </a>
-                        </li>                                    
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('student_fee_transactions.index') }}">
+                                <i class="fas fa-money-check-alt"></i>
+                                <p>Student Fee Transactions</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('student_course_fees.index') }}">
+                                <i class="fas fa-money-check-alt"></i>
+                                <p>Student Course Fees</p>
+                            </a>
+                        </li>
+                        
+                                                       
                         {{-- <li class="nav-item">
                             <a data-bs-toggle="collapse" href="#base">
                                 <i class="fas fa-layer-group"></i>
