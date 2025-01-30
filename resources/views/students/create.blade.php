@@ -24,7 +24,7 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('students.store') }}">
+    <form method="POST" action="{{ route('students.store') }}"  enctype="multipart/form-data">
         @csrf
         <div class="row">
             <!-- User Basic Information -->
@@ -117,10 +117,11 @@
                     <input type="text" name="state" placeholder="State" class="form-control" value="{{ old('state') }}">
                 </div>
             </div>
+            <!-- Course Selection -->
             <div class="col-xs-12 col-sm-12 col-md-6">
                 <div class="form-group">
                     <strong>Course:</strong>
-                    <select name="course" class="form-control">
+                    <select name="course" class="form-control" id="course-select">
                         <option value="">Select Course</option>
                         @foreach ($courses as $course)
                             <option value="{{ $course->id }}" {{ old('course') == $course->id ? 'selected' : '' }}>
@@ -130,16 +131,23 @@
                     </select>
                 </div>
             </div>
+            <!-- Student Batch Selection (Dynamic) -->
             <div class="col-xs-12 col-sm-12 col-md-6">
                 <div class="form-group">
                     <strong>Student Batch:</strong>
-                    <input type="text" name="student_batch" placeholder="Student Batch" class="form-control" value="{{ old('student_batch') }}">
+                    <select name="student_batch" class="form-control" id="student-batch-select">
+                        <option value="">Select Batch</option>
+                        <!-- Batches will be dynamically loaded here -->
+                    </select>
                 </div>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-6">
                 <div class="form-group">
                     <strong>Batch Professor:</strong>
-                    <input type="text" name="batch_professor" placeholder="Batch Professor" class="form-control" value="{{ old('batch_professor') }}">
+                    <select name="batch_professor" class="form-control" id="student-professor-select">
+                        <option value="">Select Professor</option>
+                        <!-- Batches will be dynamically loaded here -->
+                    </select>
                 </div>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-6">
@@ -155,6 +163,14 @@
                 </div>
             </div>
 
+            <!-- Image Upload Section -->
+            <div class="col-xs-12 col-sm-12 col-md-6">
+                <div class="form-group">
+                    <strong>Upload Profile Image:</strong>
+                    <input type="file" name="image" class="form-control" accept="image/*">
+                </div>
+            </div>
+
             <div class="col-xs-12 col-sm-12 col-md-12 text-center">
                 <button type="submit" class="btn btn-primary btn-sm mt-2 mb-3">
                     <i class="fa-solid fa-floppy-disk"></i> Submit
@@ -162,4 +178,67 @@
             </div>
         </div>
     </form>
+    <!-- JavaScript to handle dynamic batch loading -->
+    <script>
+        document.getElementById('course-select').addEventListener('change', function() {
+            var courseId = this.value;
+
+            // if (courseId) {
+            //     // Fetch batches for the selected course using AJAX
+            //     fetch(`/get-batches/${courseId}`)
+            //         .then(response => response.json())
+            //         .then(data => {
+            //             var batchSelect = document.getElementById('student-batch-select');
+            //             batchSelect.innerHTML = '<option value="">Select Batch</option>'; // Reset batch options
+            //             data.batches.forEach(function(batch) {
+            //                 var option = document.createElement('option');
+            //                 option.value = batch.id;
+            //                 option.textContent = batch.batch_name;
+            //                 batchSelect.appendChild(option);
+            //             });
+            //         })
+            //         .catch(error => console.error('Error fetching batches:', error));
+            // } else {
+            //     // Clear the batch dropdown if no course is selected
+            //     document.getElementById('student-batch-select').innerHTML = '<option value="">Select Batch</option>';
+            // }
+
+            if (courseId) {
+                // Fetch batches for the selected course using AJAX
+                fetch(`/get-batches/${courseId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        var batchSelect = document.getElementById('student-batch-select');
+                        batchSelect.innerHTML = '<option value="">Select Batch</option>'; // Reset batch options
+                        data.batches.forEach(function(batch) {
+                            var option = document.createElement('option');
+                            option.value = batch.id;
+                            option.textContent = batch.batch_name;
+                            batchSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching batches:', error));
+
+                // Fetch professors for the selected course using AJAX
+                fetch(`/get-professors/${courseId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        var professorSelect = document.getElementById('student-professor-select');
+                        professorSelect.innerHTML = '<option value="">Select Professor</option>'; // Reset professor options
+                        data.professors.forEach(function(professor) {
+                            var option = document.createElement('option');
+                            option.value = professor.id;
+                            option.textContent = professor.user_name.name;
+                            professorSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching professors:', error));
+            } else {
+                // Clear both batch and professor dropdowns if no course is selected
+                document.getElementById('student-batch-select').innerHTML = '<option value="">Select Batch</option>';
+                document.getElementById('student-professor-select').innerHTML = '<option value="">Select Professor</option>';
+            }
+
+        });
+    </script>
 @endsection

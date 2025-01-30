@@ -61,6 +61,15 @@
                         value="{{ old('batches') }}">
                 </div>
             </div>
+
+            <div class="col-xs-12 col-sm-12 col-md-6">
+                <div class="form-group">
+                    <strong>Installment Cycle:</strong>
+                    <input type="number" name="installment_cycle" placeholder="Enter installment cycle" 
+                           class="form-control" value="{{ old('installment_cycle') }}">
+                </div>
+            </div>
+            
             <div class="col-xs-12 col-sm-12 col-md-12 text-center">
                 <button type="submit" class="btn btn-primary btn-sm mt-2 mb-3">
                     <i class="fa-solid fa-floppy-disk"></i> Submit

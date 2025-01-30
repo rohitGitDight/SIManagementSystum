@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
+use App\Models\Course;
 
 class ProffessorContoller extends Controller
 {
@@ -27,9 +28,12 @@ class ProffessorContoller extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(): View
-    {
-        return view('proffessors.create');
+    public function create(){
+        // Fetch courses from the 'courses' table
+        $courses = Course::all();
+
+        // Pass the courses to the view
+        return view('proffessors.create', compact('courses'));
     }
 
     /**
@@ -127,8 +131,8 @@ class ProffessorContoller extends Controller
     {
         // Retrieve the user and their details using the relationship
         $user = User::with('details')->findOrFail($id);
-
-        return view('proffessors.edit', compact('user'));
+        $courses = Course::all();
+        return view('proffessors.edit', compact('user' , 'courses'));
     }
 
 
@@ -193,13 +197,22 @@ class ProffessorContoller extends Controller
      */
     public function destroy($id): RedirectResponse
     {
+        // Find the user by ID
         $user = User::find($id);
+
         if ($user) {
+            // Update the user's email and set 'is_active' to 0 instead of deleting
             $user->email = $user->email . "-" . $id;
             $user->is_active = 0;
             $user->save();
+
+            // Delete the associated records from model_has_roles where model_id equals the user's id
+            Model_has_role::where('model_id', $id)->delete();
         }
-        return redirect()->route('proffessors.index')
+
+        // Redirect with success message
+        return redirect()->route('professors.index')
             ->with('success', 'User deleted successfully');
     }
+
 }

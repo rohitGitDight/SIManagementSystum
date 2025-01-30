@@ -140,12 +140,28 @@
             <div class="col-md-6">
                 <div class="form-group">
                     <label><strong>Course:</strong></label>
-                    <select name="course" class="form-control">
+                    <select name="course" class="form-control" id="course-select">
                         <option value="">Select Course</option>
                         @foreach ($courses as $course)
                             <option value="{{ $course->id }}" 
                                 {{ old('course', $user->details->course ?? '') == $course->id ? 'selected' : '' }}>
                                 {{ $course->name_of_course }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
+            <!-- Student Batch Selection (Dynamic) -->
+            <div class="col-xs-12 col-sm-12 col-md-6">
+                <div class="form-group">
+                    <strong>Student Batch:</strong>
+                    <select name="student_batch" class="form-control" id="student-batch-select">
+                        <option value="">Select Batch</option>
+                        @foreach ($courseBatch as $batch)
+                            <option value="{{ $batch->id }}" 
+                                {{ old('student_batch', $user->details->student_batch ?? '') == $batch->id ? 'selected' : '' }}>
+                                {{ $batch->batch_name }}
                             </option>
                         @endforeach
                     </select>
@@ -159,6 +175,13 @@
                 </div>
             </div>
 
+            <div class="col-xs-12 col-sm-12 col-md-6">
+                <div class="form-group">
+                    <strong>Upload Profile Image:</strong>
+                    <input type="file" name="image" class="form-control" accept="image/*">
+                </div>
+            </div>
+
             <div class="col-md-12 text-center">
                 <button type="submit" class="btn btn-primary mt-2">
                     <i class="fa fa-save"></i> Update
@@ -166,4 +189,31 @@
             </div>
         </div>
     </form>
+
+    <!-- JavaScript to handle dynamic batch loading -->
+    <script>
+        document.getElementById('course-select').addEventListener('change', function() {
+            var courseId = this.value;
+
+            if (courseId) {
+                // Fetch batches for the selected course using AJAX
+                fetch(`/get-batches/${courseId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        var batchSelect = document.getElementById('student-batch-select');
+                        batchSelect.innerHTML = '<option value="">Select Batch</option>'; // Reset batch options
+                        data.batches.forEach(function(batch) {
+                            var option = document.createElement('option');
+                            option.value = batch.id;
+                            option.textContent = batch.batch_name;
+                            batchSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching batches:', error));
+            } else {
+                // Clear the batch dropdown if no course is selected
+                document.getElementById('student-batch-select').innerHTML = '<option value="">Select Batch</option>';
+            }
+        });
+    </script>
 @endsection

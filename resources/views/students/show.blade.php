@@ -18,6 +18,10 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header bg-primary text-white">
+                    @if ($user->details->image)
+                        <img src="{{ asset('images/' . $user->details->image) }}" alt="User Image" class="img-thumbnail" width="100">
+                    @endif
+
                     <h5><i class="fa fa-user"></i> User Details</h5>
                 </div>
                 <div class="card-body">

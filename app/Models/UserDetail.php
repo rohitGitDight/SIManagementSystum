@@ -12,6 +12,7 @@ class UserDetail extends Model
 
     protected $fillable = [
         'user_id',
+        'image',
         'dob',
         'married',
         'contact',
@@ -39,5 +40,8 @@ class UserDetail extends Model
         return $this->belongsTo(Course::class, 'course_id'); // Assuming 'course_id' is the foreign key
     }
 
-
+    public function userName()
+    {
+        return $this->hasOne(User::class, 'id', 'user_id');
+    }
 }

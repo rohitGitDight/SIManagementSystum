@@ -26,12 +26,19 @@ class Course extends Model
         'duration',
         'fee',
         'professor',
-        'batches'
+        'batches',
+        'installment_cycle'
     ];
 
     public function courseFees()
     {
         return $this->hasMany(CourseFee::class, 'course_id');
     }
+
+    public function batches()
+    {
+        return $this->hasMany(Batch::class);
+    }
+
 
 }

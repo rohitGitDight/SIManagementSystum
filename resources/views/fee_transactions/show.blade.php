@@ -45,7 +45,7 @@
                         <th>Transaction Report</th>
                         <td>
                             @if($transaction->transaction_report)
-                                <a href="{{ asset('storage/' . $transaction->transaction_report) }}" target="_blank">View Report</a>
+                                <a href="{{ asset('images/' . $transaction->transaction_report) }}" target="_blank">View Report</a>
                             @else
                                 N/A
                             @endif

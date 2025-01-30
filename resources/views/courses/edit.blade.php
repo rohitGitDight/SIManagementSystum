@@ -70,6 +70,15 @@
                         value="{{ old('batches', $course->batches) }}">
                 </div>
             </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label><strong>Installment Cycle:</strong></label>
+                    <input type="number" name="installment_cycle" class="form-control" placeholder="Number of installment Cycles"
+                        value="{{ old('installment_cycle', $course->installment_cycle) }}">
+                </div>
+            </div>
+
             <div class="col-md-12 text-center">
                 <button type="submit" class="btn btn-primary mt-2">
                     <i class="fa fa-save"></i> Update

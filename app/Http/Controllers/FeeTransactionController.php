@@ -37,7 +37,6 @@ class FeeTransactionController extends Controller
         // Handle file upload if exists
         $transaction_report_path = null;
         if ($request->hasFile('transaction_report')) {
-            // Store the uploaded file in the public disk, under 'transaction_reports' folder
             $transaction_report_path = $request->file('transaction_report')->store('transaction_reports', 'public');
         }
 

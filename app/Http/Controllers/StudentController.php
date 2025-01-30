@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\UserDetail;
+use App\Models\Model_has_role;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Illuminate\View\View;
@@ -11,6 +13,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use App\Models\Course;
+use App\Models\Batch; // Assuming you have a Batch model
 
 class StudentController extends Controller
 {
@@ -18,7 +21,8 @@ class StudentController extends Controller
     //
     public function index(Request $request): View{
         // Fetch only active users and paginate
-        $data = User::where('is_active', 1)->latest()->paginate(5);
+        $data1 = Model_has_role::where('role_id', 4)->orderBy('model_id', 'desc')->pluck('model_id');
+        $data = User::whereIn("id", $data1)->where('is_active', 1)->latest()->paginate(5);
 
         return view('students.index', compact('data'))
             ->with('i', ($request->input('page', 1) - 1) * 5);
@@ -52,6 +56,7 @@ class StudentController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email|max:255',
+            'image' => 'nullable|file|mimes:jpeg,png,pdf,jpg',
             'password' => 'required|same:confirm-password|min:8',
             'dob' => 'required|date',
             'married' => 'required|boolean',
@@ -64,11 +69,19 @@ class StudentController extends Controller
             'city' => 'nullable|string|max:255',
             'state' => 'nullable|string|max:255',
             'course' => 'nullable|string|max:255',
-            'student_batch' => 'nullable|string|max:255',
+            'student_batch' => 'nullable|integer|max:255',
             'batch_professor' => 'nullable|string|max:255',
             'fee' => 'nullable|numeric',
             'aadhaar_card_number' => 'nullable|string|max:16|unique:user_details,aadhaar_card_number',
         ]);
+
+
+        // Handle file upload if exists
+        $new_name = null;
+        if ($request->hasFile('image')) {
+            // Store the uploaded file in the public disk, under 'transaction_reports' folder
+            $new_name = $request->file('image')->store('transaction_reports', 'public');
+        }
 
         // Check for validation errors
         if ($validator->fails()) {
@@ -105,7 +118,8 @@ class StudentController extends Controller
             'aadhaar_card_number'
         ]);
         $userDetailsData['user_id'] = $user->id;
-
+        $userDetailsData['image'] = $new_name;
+        
         // Use DB facade to insert data
         \DB::table('user_details')->insert($userDetailsData);
 
@@ -140,12 +154,16 @@ class StudentController extends Controller
     public function edit($id){
         // Fetch the user by ID
         $user = User::findOrFail($id);
+        $userDetail = UserDetail::where('user_id', $id)->firstOrFail();
 
+        $courseId = $userDetail->course;
         // Fetch courses from the 'courses' table
         $courses = Course::all();
 
+        $courseBatch = Batch::where('course_id',$courseId)->get();
+
         // Pass the user and courses to the view
-        return view('students.edit', compact('user', 'courses'));
+        return view('students.edit', compact('user', 'courses','courseBatch'));
     }
 
 
@@ -175,7 +193,7 @@ class StudentController extends Controller
             'city' => 'nullable|string|max:255',
             'state' => 'nullable|string|max:255',
             'course' => 'nullable|string|max:255',
-            'student_batch' => 'nullable|string|max:255',
+            'student_batch' => 'nullable|integer|max:255',
             'batch_professor' => 'nullable|string|max:255',
             'fee' => 'nullable|numeric',
             'aadhaar_card_number' => 'nullable|string|max:16|unique:user_details,aadhaar_card_number,' . $id . ',user_id',
@@ -223,13 +241,41 @@ class StudentController extends Controller
      */
     public function destroy($id)
     {
+        // Find the user by ID
         $user = User::find($id);
-        if($user){
-            $user->email = $user->email."-".$id;
+        
+        if ($user) {
+            // Update the user's email and set 'is_active' to 0 instead of deleting
+            $user->email = $user->email . "-" . $id;
             $user->is_active = 0;
             $user->save();
+
+            // Delete the associated records from model_has_roles where model_id equals the user's id
+            Model_has_role::where('model_id', $id)->delete();
         }
+
+        // Redirect with success message
         return redirect()->route('students.index')
             ->with('success', 'User deleted successfully');
     }
+
+
+    public function getBatches($courseId)
+    {
+        // Fetch batches for the selected course
+        $batches = Batch::where('course_id', $courseId)->get();
+
+        // Return batches as JSON
+        return response()->json(['batches' => $batches]);
+    }
+
+    public function getProfessors($courseId)
+    {
+        // Fetch professors for the given course
+        $data1 = Model_has_role::where('role_id', 3)->orderBy('model_id', 'desc')->pluck('model_id');
+        $professors = UserDetail::whereIn("user_id", $data1)->where('course',$courseId)->with('userName')->get();  // Example query
+        return response()->json(['professors' => $professors]);
+
+    }
+
 }

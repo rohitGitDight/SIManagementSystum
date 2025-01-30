@@ -45,6 +45,7 @@ class CoursesController extends Controller
             'fee' => 'required|numeric|min:0',
             'professor' => 'required|string|max:255',
             'batches' => 'required|integer|min:1',
+            'installment_cycle' => 'required|integer'
         ]);
 
         if ($validator->fails()) {
@@ -53,7 +54,7 @@ class CoursesController extends Controller
                 ->withInput();
         }
 
-        $courseData = $request->only(['name_of_course', 'duration', 'fee', 'professor', 'batches']);
+        $courseData = $request->only(['name_of_course', 'duration', 'fee', 'professor', 'batches','installment_cycle']);
         Course::create($courseData);
 
         return redirect()->route('courses.index')
@@ -106,6 +107,7 @@ class CoursesController extends Controller
             'fee' => 'required|numeric|min:0',
             'professor' => 'required|string|max:255',
             'batches' => 'required|integer|min:1',
+            'installment_cycle' => 'required|integer' // Accepts any string input
         ]);
 
         $course = Course::findOrFail($id);
@@ -116,6 +118,7 @@ class CoursesController extends Controller
             'fee' => $request->fee,
             'professor' => $request->professor,
             'batches' => $request->batches,
+            'installment_cycle' => $request->installment_cycle
         ]);
 
         return redirect()->route('courses.index')->with('success', 'Course updated successfully');

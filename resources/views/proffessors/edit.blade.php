@@ -104,9 +104,15 @@
 
             <div class="col-md-6">
                 <div class="form-group">
-                    <label><strong>Course:</strong></label>
-                    <input type="text" name="course" class="form-control" placeholder="Course"
-                        value="{{ old('course', $details->course ?? '') }}">
+                    <strong>Course:</strong>
+                    <select name="course" class="form-control" id="course-select">
+                        <option value="">Select Course</option>
+                        @foreach ($courses as $course)
+                            <option value="{{ $course->id }}" {{ old('course', $course->id ?? '') == $details->course ? 'selected' : '' }}>
+                                {{ $course->name_of_course }}
+                            </option>
+                        @endforeach
+                    </select>
                 </div>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-6">

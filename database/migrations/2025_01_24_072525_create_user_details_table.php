@@ -25,8 +25,8 @@ return new class extends Migration
             $table->string('city')->nullable();
             $table->string('state')->nullable();
             $table->string('course')->nullable();
-            $table->string('student_batch')->nullable();
-            $table->string('batch_professor')->nullable();
+            $table->integer('student_batch')->nullable();
+            $table->integer('batch_professor')->nullable();
             $table->decimal('fee', 10, 2)->nullable();
             $table->string('aadhaar_card_number', 16)->unique()->nullable();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'))->change();

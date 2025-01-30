@@ -43,20 +43,25 @@ Route::middleware('auth')->group(function () {
 
     // routes/web.php
 
-    Route::middleware(['auth'])->group(function () {
-        Route::get('/fee/transactions/create', [FeeTransactionController::class, 'create'])->name('fee_transactions.create');
-        Route::post('/fee/transactions', [FeeTransactionController::class, 'store'])->name('fee_transactions.store');
-    });
+    Route::get('/fee/transactions/create', [FeeTransactionController::class, 'create'])->name('fee_transactions.create');
+    Route::post('/fee/transactions', [FeeTransactionController::class, 'store'])->name('fee_transactions.store');
 
-    Route::middleware(['auth'])->group(function () {
-        Route::get('/fee/transactions', [FeeTransactionController::class, 'index'])->name('fee_transactions.index');
-    });
+
+    Route::get('/fee/transactions', [FeeTransactionController::class, 'index'])->name('fee_transactions.index');
 
     Route::delete('/fee_transactions/{id}', [FeeTransactionController::class, 'destroy'])->name('fee_transactions.destroy');
     
     Route::get('/fee_transactions/{id}', [FeeTransactionController::class, 'show'])->name('fee_transactions.show');
 
     Route::resource('proffessors', ProffessorContoller::class);
+
+    // routes/web.php
+    Route::get('/get-batches/{courseId}', [StudentController::class, 'getBatches']);
+    Route::get('/get-professors/{courseId}', [StudentController::class, 'getProfessors']);
+
+
+    Route::get('/professors', [ProfessorController::class, 'index'])->name('professors.index');
+
 
 });
 

@@ -5,10 +5,6 @@
         <div class="col-lg-12 margin-tb d-flex justify-content-between">
             <div class="pull-left">
                 <h2>Create New</h2>
-                <select>
-                    <option value="2">HR</option>
-                    <option value="3" selected>Professor</option>
-                </select>
             </div>
             <div class="pull-right">
                 <a class="btn btn-primary btn-sm mb-2" href="{{ route('proffessors.index') }}"><i class="fa fa-arrow-left"></i>
@@ -105,8 +101,14 @@
             <div class="col-xs-12 col-sm-12 col-md-6">
                 <div class="form-group">
                     <strong>Course:</strong>
-                    <input type="text" name="course" placeholder="Course" class="form-control"
-                        value="{{ old('course') }}">
+                    <select name="course" class="form-control" id="course-select">
+                        <option value="">Select Course</option>
+                        @foreach ($courses as $course)
+                            <option value="{{ $course->id }}" {{ old('course') == $course->id ? 'selected' : '' }}>
+                                {{ $course->name_of_course }}
+                            </option>
+                        @endforeach
+                    </select>
                 </div>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-6">
