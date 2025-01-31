@@ -3,6 +3,7 @@
 @section('content')
 <div class="container">
     <h2>Student Course Fees</h2>
+
     <table class="table table-bordered">
         <thead>
             <tr>
@@ -28,19 +29,30 @@
                                         <th>Payment</th>
                                         <th>Payment Date</th>
                                         <th>Status</th>
+                                        <th>Action</th> <!-- Added column for button -->
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach (json_decode($fee->payment_details) as $payment)
+                                    @foreach (json_decode($fee->payment_details) as $key => $payment)
                                         <tr>
-                                            <td>{{ $payment->payment }}</td>
+                                            <td>{{ $payment->payment }} /-</td>
                                             <td>{{ \Carbon\Carbon::parse($payment->payment_date)->format('Y-m-d') }}</td>
                                             <td>
                                                 @if ($payment->payment_status == 1)
-                                                    <span style="color: green; font-weight: bold;">Paid</span>
+                                                    <span style="color: green; font-weight: bold;">Complete</span>
                                                 @else
                                                     <span style="color: red; font-weight: bold;">Pending</span>
                                                 @endif
+                                            </td>
+                                            <td>
+                                                @if ($payment->payment_status == 1)
+                                                    <i class="fas fa-check-circle" style="color: green;"></i>
+                                                @else
+                                                    <a href="{{ route('student_fee_transactions.create', ['user_id' => $fee->user->id, 'course_id' => $fee->course->id, 'payment_type' => $key + 1 , 'amount' => $payment->payment]) }}" class="btn btn-primary btn-sm">
+                                                        <i class="fa fa-plus" aria-hidden="true"></i>
+                                                    </a>
+                                                @endif
+                                                
                                             </td>
                                         </tr>
                                     @endforeach
@@ -56,6 +68,5 @@
             @endforeach
         </tbody>
     </table>    
-    
 </div>
 @endsection

@@ -50,9 +50,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/student_fee_transactions', [StudentFeeTransactionController::class, 'index'])->name('student_fee_transactions.index');
     Route::get('/student_fee_transactions/create', [StudentFeeTransactionController::class, 'create'])->name('student_fee_transactions.create');
     Route::post('/student_fee_transactions/store', [StudentFeeTransactionController::class, 'store'])->name('student_fee_transactions.store');
-
-    Route::get('/student-course-fees', [StudentCourseFeeController::class, 'index'])->name('student_course_fees.index');
     
+    Route::get('/student-course-fees', [StudentCourseFeeController::class, 'index'])->name('student_course_fees.index');
+
 });
 
 require __DIR__ . '/auth.php';

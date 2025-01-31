@@ -17,7 +17,7 @@ class StudentFeeTransaction extends Model {
         'cash_received_by',
         'transaction_report',
         'amount',
-        'payment_date'
+        'payment_type'
     ];
 
     public function student() {

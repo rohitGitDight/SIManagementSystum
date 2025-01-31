@@ -20,7 +20,6 @@ return new class extends Migration
             $table->string('cash_received_by')->nullable();
             $table->string('transaction_report')->nullable();
             $table->decimal('amount', 10, 2);
-            $table->date('payment_date');
             $table->timestamps();
         });
     }
