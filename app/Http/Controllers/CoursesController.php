@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Course;
+use App\Models\Model_has_role;
+use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -27,7 +29,9 @@ class CoursesController extends Controller
      */
     public function create()
     {
-        return view('courses.create');
+        $data1 = Model_has_role::where('role_id', 3)->orderBy('model_id', 'desc')->pluck('model_id');
+        $professors = User::whereIn("id", $data1)->where('is_active', 1)->latest()->paginate(5);
+        return view('courses.create', compact('professors'));
     }
 
     /**
@@ -70,8 +74,10 @@ class CoursesController extends Controller
     public function show($id): View
     {
         $course = Course::findOrFail($id);
+        $data1 = Model_has_role::where('role_id', 3)->orderBy('model_id', 'desc')->pluck('model_id');
+        $professor = User::where('is_active', 1)->where('id' , $course->professor)->first();
 
-        return view('courses.show', compact('course'));
+        return view('courses.show', compact('course' , 'professor'));
     }
 
 

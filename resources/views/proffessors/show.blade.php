@@ -4,7 +4,7 @@
     <div class="row">
         <div class="col-lg-12 margin-tb d-flex justify-content-between">
             <div class="pull-left">
-                <h2>Show Proffessor</h2>
+                <h2>Show Professor</h2>
             </div>
             <div class="pull-right">
                 <a class="btn btn-primary btn-sm" href="{{ route('proffessors.index') }}">
@@ -18,7 +18,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header bg-primary text-white">
-                    <h5><i class="fa fa-user"></i> Proffessor Details</h5>
+                    <h5><i class="fa fa-user"></i> Professor Details</h5>
                 </div>
                 <div class="card-body">
                     <div class="row">

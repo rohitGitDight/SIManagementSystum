@@ -12,7 +12,7 @@
         <div class="alert alert-danger">{{ session('error') }}</div>
     @endif
 
-    <table class="table table-bordered">
+    <table class="table table-bordered" id="multi-filter-select">
         <thead>
             <tr>
                 <th>#</th>

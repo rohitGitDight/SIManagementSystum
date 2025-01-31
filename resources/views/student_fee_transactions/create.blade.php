@@ -1,9 +1,36 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <h2>Add Fee Transaction</h2>
+<style>
+    .add-remaining-amount {
+        font-size: 36px;
+        font-weight: bold;
+        color: #2c3e50;
+        background-color: #ecf0f1;
+        padding: 10px 20px;
+        border-radius: 5px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
 
+    .d-inline {
+        display: inline-block;
+    }
+</style>
+
+<div class="container">
+
+    <div class="row">
+        <div class="col-lg-12 margin-tb d-flex justify-content-between">
+            <div class="pull-left">
+                <h2 >Add Fee Transaction</h2>
+            </div>
+            <div class="pull-right">
+                <h3 class="d-inline">Remaining Amount -</h3>
+                <h3 class="text-danger d-inline add-remaining-amount"> ₹{{ request('remaining_amount') }} </h3>
+            </div>                       
+        </div>
+    </div>
+    
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif

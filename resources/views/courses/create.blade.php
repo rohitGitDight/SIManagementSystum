@@ -50,8 +50,12 @@
             <div class="col-xs-12 col-sm-12 col-md-6">
                 <div class="form-group">
                     <strong>Professor:</strong>
-                    <input type="text" name="professor" placeholder="Professor Name" class="form-control"
-                        value="{{ old('professor') }}">
+                    <select name="professor" id="professor" class="form-control">
+                        <option value="">Select Professor</option>
+                        @foreach($professors as $professor)
+                            <option value="{{ $professor->id }}">{{ $professor->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-6">

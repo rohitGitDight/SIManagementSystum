@@ -37,7 +37,7 @@
                             </div>
                             <div class="form-group">
                                 <strong>Professor:</strong>
-                                <p>{{ $course->professor }}</p>
+                                <p>{{ $professor->name }}</p>
                             </div>
                             <div class="form-group">
                                 <strong>Batches:</strong>
