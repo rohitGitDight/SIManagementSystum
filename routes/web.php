@@ -43,6 +43,7 @@ Route::middleware('auth')->group(function () {
     // routes/web.php
     Route::get('/get-batches/{courseId}', [StudentController::class, 'getBatches']);
     Route::get('/get-professors/{courseId}', [StudentController::class, 'getProfessors']);
+    Route::get('/get-courseFee/{courseId}', [StudentController::class, 'getCourseFee']);
 
 
     Route::get('/professors', [ProfessorController::class, 'index'])->name('professors.index');

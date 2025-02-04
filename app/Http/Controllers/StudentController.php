@@ -301,6 +301,14 @@ class StudentController extends Controller
 
     }
 
+    public function getCourseFee($courseId)
+    {
+        $courseFee = Course::where('id' , $courseId)->get();
+        return response()->json(['courseFee' => $courseFee]);
+
+    }
+    
+
     public function getInstallmentDates($userId)
     {
         $user_id = $userId->id;
