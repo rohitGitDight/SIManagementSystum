@@ -23,14 +23,12 @@ class StudentFeeTransactionController extends Controller {
         $students = User::whereIn('id', $studentIds)->get();
     
         $studentImgs = UserDetail::whereIn('user_id', $studentIds)->get();
-    
-        foreach ($studentImgs as $studentImg) {
-            $students->image = $studentImg ? $studentImg->image : null; // Add image to the student object
-        }
 
         $courses = Course::where('is_active', 1)->get();
+
+        $nextDate = StudentCourseFee::get();
     
-        return view('student_fee_transactions.create', compact('students', 'courses'));
+        return view('student_fee_transactions.create', compact('students', 'courses' , 'studentImgs' , 'nextDate'));
     }
     
     public function store(Request $request) {

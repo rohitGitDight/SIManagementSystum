@@ -25,9 +25,22 @@
                 <h2 >Add Fee Transaction</h2>
             </div>
             <div class="pull-right">
+                @foreach ($studentImgs as $studentNameImg)
+                    @if ($studentNameImg->user_id == request('user_id'))
+                        <div class="d-flex align-items-right">
+                            <img src="{{ asset('images/' . $studentNameImg->image) }}" alt="Student Image" class="rounded-circle me-2" width="50" height="50">
+                            
+                            @foreach($students as $student)
+                                @if ($student->id == request('user_id'))
+                                    <h4 class="me-3">{{ $student->name }}</h4>
+                                @endif
+                            @endforeach
+                        </div>
+                    @endif
+                @endforeach
                 <h3 class="d-inline">Remaining Amount -</h3>
                 <h3 class="text-danger d-inline add-remaining-amount"> ₹{{ request('remaining_amount') }} </h3>
-            </div>                       
+            </div>
         </div>
     </div>
     
@@ -125,9 +138,74 @@
         
         <div class="form-group">
             <label for="amount">Amount Paid - <b style="color:red"> ₹{{ request('amount') }}</b></label>
-            <input type="number" name="amount" class="form-control" value="{{ request('amount') }}" required>
+            <input type="number" name="amount" id="amount" class="form-control" value="{{ request('amount') }}" required max="{{ request('amount') }}" oninput="checkAmount()">
+            <span id="error-message" class="text-danger" style="display:none;">only: ₹{{ request('amount') }}</span>
         </div>
+        <?php 
+            $studentCourseFeeDates = [];
+            $customDate =  request('payment_date');
+            $pendingDates = [];
 
+            foreach ($nextDate as $nextDateValue) {
+                if ($nextDateValue->user_id == request('user_id') && $nextDateValue->course_id == request('course_id')) {
+                    $paymentDetails = json_decode($nextDateValue->payment_details, true);
+                    
+                    // Filter the payment details to exclude the custom date
+                    $filteredPayments = array_filter($paymentDetails, function($payment) use ($customDate) {
+                        return $payment['payment_date'] !== $customDate;
+                    });
+                    
+                    // Re-index the array to prevent gaps in the array keys
+                    $filteredPayments = array_values($filteredPayments);
+                    foreach ($filteredPayments as $key => $pendingValue) {
+                        if ($pendingValue['payment'] != 0 && $pendingValue['payment_date'] < $customDate) {
+                            $pendingDates[] = [
+                                'pending_payment_date' => $pendingValue['payment_date'],
+                                'pending_payment_amount' => $pendingValue['payment']
+                            ];
+                        }
+                    }
+
+                    foreach ($paymentDetails as $nextDatekey => $nextDateValue) {
+                        if ($nextDatekey >= request('payment_type')) {
+                            $studentCourseFeeDates[] = [
+                                'future_payment_date' => $nextDateValue['payment_date'],
+                                'future_payment_amount' => $nextDateValue['payment']
+                            ];
+                        }
+                    }
+                                       
+                    break; // Exit the loop once the matching record is found
+                }
+            } 
+            
+        ?>
+        
+        @foreach ($pendingDates as $pendingDate)
+            <div class="alert alert-warning d-flex align-items-center justify-content-between p-3" style="border-left: 5px solid #ff9800; background: #fff3cd; color: #856404; font-size: 18px; font-weight: bold;">
+                <span>📅 Pending Date: <span class="text-danger">{{ $pendingDate['pending_payment_date'] }}</span></span>
+                <span>💰 Amount: <strong class="text-danger">₹{{ number_format($pendingDate['pending_payment_amount'], 2) }}</strong></span>
+            </div>
+        @endforeach
+        @if (!empty($studentCourseFeeDates))
+            @foreach($studentCourseFeeDates as $feeDate)
+                <div class="alert alert-info text-center mt-3" style="font-size: 18px; font-weight: bold;">
+                        <p>📅 Next Payment Date: 
+                            <span class="text-primary">{{ $feeDate['future_payment_date'] }}
+                                @if(!empty($feeDate['future_payment_amount']))
+                                    <span>💰 Amount: <strong class="text-success">₹{{ number_format($feeDate['future_payment_amount'], 2) }}</strong></span>
+                                @endif
+                            </span>
+                        </p>
+                    </div>
+            @endforeach
+        @else
+            <div class="alert alert-info text-center mt-3" style="font-size: 18px; font-weight: bold;">
+                <p>📅 <?php echo request('payment_date'); ?>
+                    <span class="text-primary">{{ '✅ Your payment will be successfully completed after this transaction.' }}</span>
+                </p>
+            </div>
+        @endif
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 </div>
@@ -165,6 +243,20 @@
         // Initialize Select2 for better dropdown UX
         $('select').select2();
     });
+
+    function checkAmount() {
+        const amountField = document.getElementById('amount');
+        const errorMessage = document.getElementById('error-message');
+        const maxAmount = {{ request('amount') }};
+
+        // Check if the entered amount is greater than the limit
+        if (amountField.value > maxAmount) {
+            errorMessage.style.display = 'inline';  // Show the error message
+            amountField.value = maxAmount;         // Set the value to the max limit
+        } else {
+            errorMessage.style.display = 'none';   // Hide the error message if the value is within limit
+        }
+    }
 </script>
 
 @endsection

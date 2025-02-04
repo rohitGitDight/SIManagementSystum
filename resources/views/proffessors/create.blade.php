@@ -123,7 +123,7 @@
                     <strong>Select Role:</strong>
                     <select name="role" class="form-control">
                         <option>Select Role</option>
-                        <option value="3">Proffessor</option>
+                        <option value="3">Professor</option>
                         <option value="2">HR</option>
                     </select>
                 </div>
