@@ -9,6 +9,7 @@ use App\Http\Controllers\CoursesController;
 use App\Http\Controllers\ProffessorContoller;
 use App\Http\Controllers\StudentFeeTransactionController;
 use App\Http\Controllers\StudentCourseFeeController;
+use App\Http\Controllers\CalendarController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -53,7 +54,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/student_fee_transactions/store', [StudentFeeTransactionController::class, 'store'])->name('student_fee_transactions.store');
     
     Route::get('/student-course-fees', [StudentCourseFeeController::class, 'index'])->name('student_course_fees.index');
-
+    Route::get('student_course_fees/{id}', [StudentCourseFeeController::class, 'show'])->name('student_course_fees.show');
+    
+    Route::get('/student-course-fees/calendar', [CalendarController::class, 'index'])->name('student_course_fees.calendar');
+    
 });
 
 require __DIR__ . '/auth.php';

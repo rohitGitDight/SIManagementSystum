@@ -44,10 +44,10 @@
                                     <td>
                                         <a class="btn btn-info btn-sm" href="{{ route('roles.show', $role->id) }}"><i
                                                 class="fa-solid far fa-eye"></i> </a>
-                                        @can('role-edit')
+                                        {{-- @can('role-edit') --}}
                                             <a class="btn btn-primary btn-sm" href="{{ route('roles.edit', $role->id) }}"><i
                                                     class="fa-solid far fa-edit"></i> </a>
-                                        @endcan
+                                        {{-- @endcan --}}
 
                                         @can('role-delete')
                                             <form method="POST" action="{{ route('roles.destroy', $role->id) }}"

@@ -246,7 +246,12 @@
                                 <p>Student Course Fees</p>
                             </a>
                         </li>
-                        
+                        <li class="nav-item">
+                            <a href="{{ route('student_course_fees.calendar') }}">
+                                <i class="fas fa-calendar-alt"></i>
+                                <p>Payment Calendar</p>
+                            </a>
+                        </li>                        
                                                        
                         {{-- <li class="nav-item">
                             <a data-bs-toggle="collapse" href="#base">

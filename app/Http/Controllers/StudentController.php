@@ -252,6 +252,8 @@ class StudentController extends Controller
                 'updated_at' => now(),
             ]);
 
+        $this->updateGetInstallmentDates($id);
+
         return redirect()->route('students.index')
             ->with('success', 'User and details updated successfully');
     }
@@ -305,7 +307,6 @@ class StudentController extends Controller
     {
         $courseFee = Course::where('id' , $courseId)->get();
         return response()->json(['courseFee' => $courseFee]);
-
     }
     
 
@@ -351,6 +352,58 @@ class StudentController extends Controller
             'remaining_amount' => $courseFee , 
             'payment_details' => json_encode($installments)] // Save as JSON
         );
+
+        return ['message' => 'Payment details saved successfully', 'data' => $installments];
+    }
+
+    public function updateGetInstallmentDates($userId)
+    {
+        $user_id = $userId;
+        // Get user details
+        $userDetail = UserDetail::where('user_id', $user_id)->firstOrFail();
+        
+        // Get course details
+        $course = Course::where('id', $userDetail->course)->first();
+
+        if (!$course || !$userDetail->course_start_date || !$userDetail->fee) {
+           
+            return ['error' => 'Course, course start date, or fee not found'];
+        }
+        
+        // Convert to Carbon instance
+        $startDate = Carbon::parse($userDetail->course_start_date);
+        
+        // Installment logic
+        $duration = $course->duration; // e.g., 60 days
+        $installmentCycle = $course->installment_cycle; // e.g., 3
+        $paymentAmount = $userDetail->fee / $installmentCycle; // e.g., 30000 / 3 = 10000
+
+        $intervalDays = $duration / $installmentCycle; // 60 / 3 = 20 days
+ 
+        // Generate installment details
+        $installments = [];
+        for ($i = 0; $i < $installmentCycle; $i++) {
+            $installments[] = [
+                'payment' => round($paymentAmount, 2),
+                'payment_date' => $startDate->copy()->addDays($intervalDays * $i)->format('Y-m-d'),
+                'payment_status' => 0 // Default status
+            ];
+        }
+
+        $courseFee = $userDetail->fee;
+        
+        $studentCourseFee = StudentCourseFee::where('user_id', $user_id)
+            ->where('course_id', $course->id)
+            ->first();
+
+        if ($studentCourseFee) {
+            // Update existing record
+            $studentCourseFee->update([
+                'course_fee' => $courseFee,
+                'remaining_amount' => $courseFee, // You might want to adjust this based on previous payments
+                'payment_details' => json_encode($installments)
+            ]);
+        }
 
         return ['message' => 'Payment details saved successfully', 'data' => $installments];
     }

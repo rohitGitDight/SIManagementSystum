@@ -194,7 +194,7 @@
             <div class="col-md-6">
                 <div class="form-group">
                     <label><strong>Fee:</strong></label>
-                    <input type="text" name="fee" class="form-control" placeholder="Fee" value="{{ old('fee', $details->fee ?? '') }}">
+                    <input type="text" name="fee" id="courseFee" class="form-control" placeholder="Fee" value="{{ old('fee', $details->fee ?? '') }}">
                 </div>
             </div>
 
@@ -245,6 +245,17 @@
                             option.value = professor.user_name.id;
                             option.textContent = professor.user_name.name;
                             professorSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching professors:', error));
+                fetch(`/get-courseFee/${courseId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.courseFee.forEach(function(courseFees) {
+                            console.log(courseFees.fee);
+                            var professorSelect = document.getElementById('courseFee');
+                            professorSelect.value = courseFees.fee;
+                            professorSelect.textContent = courseFees.fee;
                         });
                     })
                     .catch(error => console.error('Error fetching professors:', error));

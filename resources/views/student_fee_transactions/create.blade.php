@@ -143,7 +143,7 @@
         </div>
         <?php 
             $studentCourseFeeDates = [];
-            $customDate =  request('payment_date');
+            $customDate = request('payment_date');
             $pendingDates = [];
 
             foreach ($nextDate as $nextDateValue) {
@@ -166,18 +166,18 @@
                         }
                     }
 
-                    foreach ($paymentDetails as $nextDatekey => $nextDateValue) {
+                    foreach ($paymentDetails as $nextDatekey => $futureDateValue) {
                         if ($nextDatekey >= request('payment_type')) {
                             $studentCourseFeeDates[] = [
-                                'future_payment_date' => $nextDateValue['payment_date'],
-                                'future_payment_amount' => $nextDateValue['payment']
+                                'future_payment_date' => $futureDateValue['payment_date'],
+                                'future_payment_amount' => $futureDateValue['payment']
                             ];
                         }
                     }
                                        
                     break; // Exit the loop once the matching record is found
                 }
-            } 
+            }
             
         ?>
         
