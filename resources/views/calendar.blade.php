@@ -22,14 +22,7 @@
             // Customize events rendering
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
-                events: events,
-                eventContent: function(info) {
-                    // Make the event title clickable by wrapping it in a link
-                    var eventTitle = info.event.title;
-                    return {
-                        html: eventTitle
-                    };
-                }
+                events: events
             });
     
             calendar.render();

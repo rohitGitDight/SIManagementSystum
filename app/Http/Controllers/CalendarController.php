@@ -83,14 +83,28 @@ class CalendarController extends Controller
 
             foreach ($details as $payment) {
                 if (!empty($payment['payment_date'])) {
+                    // Check if the payment status is 0 (Pending) or 1 (Paid)
+                    if ($payment['payment_status'] == 0) {
+                        // For Pending payments (payment_status = 0), color it red
+                        $color = 'red';
+                        $status = 'Pending';
+                    } else {
+                        // For Paid payments (payment_status = 1), color it green
+                        $color = 'green';
+                        $status = 'Paid';
+                    }
+            
+                    // Add the payment event to the paymentDates array with the determined color
                     $paymentDates[] = [
-                        'title' => "{$userName} - {$courseName} Pending",
+                        'title' => "{$userName} - {$courseName} {$status}",
                         'start' => $payment['payment_date'],
-                        'color' => 'red', // Highlight color for payments
+                        'color' => $color, // Apply the color based on payment status
                         'url' => route('student_course_fees.show', ['id' => $fee->id]) // The URL for the event
                     ];
                 }
             }
+            
+            
         }
 
         return view('calendar', compact('paymentDates'));

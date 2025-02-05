@@ -57,7 +57,7 @@ Route::middleware('auth')->group(function () {
     Route::get('student_course_fees/{id}', [StudentCourseFeeController::class, 'show'])->name('student_course_fees.show');
     
     Route::get('/student-course-fees/calendar', [CalendarController::class, 'index'])->name('student_course_fees.calendar');
-    
+
 });
 
 require __DIR__ . '/auth.php';
