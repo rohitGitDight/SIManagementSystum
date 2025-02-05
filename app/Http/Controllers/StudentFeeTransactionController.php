@@ -9,6 +9,7 @@ use App\Models\UserDetail;
 use App\Models\Course;
 use App\Models\Model_has_role;
 use App\Models\StudentCourseFee;
+use App\Models\Invoice;
 
 class StudentFeeTransactionController extends Controller {
 
@@ -32,6 +33,7 @@ class StudentFeeTransactionController extends Controller {
     }
     
     public function store(Request $request) {
+        
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'course_id' => 'required|exists:courses,id',
@@ -39,14 +41,28 @@ class StudentFeeTransactionController extends Controller {
             'amount' => 'required|numeric',
             'payment_type' => 'required|integer',
             'transaction_report' => 'nullable|image|mimes:jpeg,png,jpg,gif'
-        ]);           
-    
+        ]);
+
         // Handle transaction report file upload
         $filePath = null;
         if ($request->hasFile('transaction_report')) {
             $filePath = $request->file('transaction_report')->store('uploads', 'public');
         }
+        $data = [
+            'user_id' => $request->user_id,
+            'course_id' => $request->course_id,
+            'payment_details' => [
+                'transaction_type' => $request->transaction_type,
+                'transaction_id' => $request->transaction_id,
+                'cheque_number' => $request->cheque_number,
+                'cash_received_by' => $request->cash_received_by,
+                'transaction_report' => $filePath,
+                'amount' => $request->amount,
+                'payment_type' => $request->payment_type
+            ]
+        ];    
     
+        $this->createInvoice($data);
         // Create the new transaction record
         StudentFeeTransaction::create([
             'user_id' => $request->user_id,
@@ -165,5 +181,20 @@ class StudentFeeTransactionController extends Controller {
     }
 
 
+    public function createInvoice($data){
+        $paymentDetails = $data['payment_details'];
+        
+        // Ensure payment details is in proper JSON format
+        $paymentDetailsJson = json_encode($paymentDetails);
+        
+        // Create the invoice
+        $invoice = Invoice::create([
+            'user_id' => $data['user_id'],
+            'course_id' => $data['course_id'],
+            'payment_details' => $paymentDetailsJson, // Store payment details as JSON
+        ]);
+    
+        return response()->json($invoice, 201);
+    }
     
 }

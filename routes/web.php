@@ -10,6 +10,7 @@ use App\Http\Controllers\ProffessorContoller;
 use App\Http\Controllers\StudentFeeTransactionController;
 use App\Http\Controllers\StudentCourseFeeController;
 use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\InvoiceController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -57,6 +58,12 @@ Route::middleware('auth')->group(function () {
     Route::get('student_course_fees/{id}', [StudentCourseFeeController::class, 'show'])->name('student_course_fees.show');
     
     Route::get('/student-course-fees/calendar', [CalendarController::class, 'index'])->name('student_course_fees.calendar');
+
+    Route::post('/invoices', [InvoiceController::class, 'store']);
+    // routes/web.php
+    Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');
+    // routes/web.php
+    Route::get('/invoices/{invoice}', [InvoiceController::class, 'show'])->name('invoices.show');
 
 });
 

@@ -8,7 +8,15 @@
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
 
 @section('content')
-
+    <style>
+        button.fc-prev-button.fc-button.fc-button-primary , button.fc-next-button.fc-button.fc-button-primary {
+            background-color: black;
+        }
+        button.fc-prev-button.fc-button.fc-button-primary {
+            margin-right: 10px;
+        }
+        
+    </style>
 <h2 style="text-align:center">Student Payment Calendar</h2>
 <div id="calendar"></div>
 

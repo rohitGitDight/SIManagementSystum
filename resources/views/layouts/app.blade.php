@@ -252,7 +252,12 @@
                                 <p>Payment Calendar</p>
                             </a>
                         </li>                        
-                                                       
+                        <li class="nav-item">
+                            <a href="{{ route('invoices.index') }}">
+                                <i class="fas fa-file-invoice"></i>
+                                <p>Invoices</p>
+                            </a>
+                        </li>                        
                         {{-- <li class="nav-item">
                             <a data-bs-toggle="collapse" href="#base">
                                 <i class="fas fa-layer-group"></i>
