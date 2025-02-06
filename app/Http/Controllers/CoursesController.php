@@ -15,7 +15,7 @@ class CoursesController extends Controller
 {
     public function index(Request $request)
     {
-        $data = Course::where('is_active', 1)->latest()->paginate(5);
+        $data = Course::where('is_active', 1)->get();
 
         return view('courses.index', compact('data'))
             ->with('i', ($request->input('page', 1) - 1) * 5);

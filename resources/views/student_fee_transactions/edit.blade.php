@@ -70,6 +70,11 @@
             <input type="text" name="cash_received_by" class="form-control" value="{{ $transaction->cash_received_by }}">
         </div>
 
+        <div class="form-group" id="payment_done_date_div" style="display: none;">
+            <label for="payment_done_date">Payment Done Date</label>
+            <input type="date" name="payment_done_date" class="form-control" value="{{ $transaction->payment_done_date ?? old('payment_done_date') }}">
+        </div>
+        
         <div class="form-group" id="transaction_report_div">
             <label for="transaction_report">Upload Transaction Report</label>
             <input type="file" name="transaction_report" class="form-control" accept="image/*">

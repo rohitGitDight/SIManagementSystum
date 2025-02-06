@@ -39,6 +39,10 @@
                                 <strong>Course:</strong>
                                 <p>{{ $batch->course->name_of_course }}</p>
                             </div>
+                            <div class="form-group">
+                                <strong>Batch Start Date:</strong>
+                                <p>{{ $batch->batch_start_date }}</p>
+                            </div>
                         </div>
                     </div>
                 </div>

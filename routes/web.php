@@ -60,11 +60,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/student-course-fees/calendar', [CalendarController::class, 'index'])->name('student_course_fees.calendar');
 
     Route::post('/invoices', [InvoiceController::class, 'store']);
-    // routes/web.php
-    Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');
-    // routes/web.php
-    Route::get('/invoices/{invoice}', [InvoiceController::class, 'show'])->name('invoices.show');
 
+    Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');
+
+    Route::get('/invoices/pdf/{id}', [InvoiceController::class, 'generatePDF'])->name('invoices.pdf');
+    
 });
 
 require __DIR__ . '/auth.php';

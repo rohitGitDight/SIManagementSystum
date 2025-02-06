@@ -10,6 +10,7 @@
                 <th>Student</th>
                 <th>Course</th>
                 <th>Course Fee</th>
+                <th>Course Duration</th>
                 <th>Payment Details</th>
                 <th>Remaining Amount</th>
                 <th>Created At</th>
@@ -21,6 +22,7 @@
                     <td>{{ $fee->user->name ?? 'N/A' }}</td>
                     <td>{{ $fee->course->name_of_course ?? 'N/A' }}</td>
                     <td>{{ $fee->course_fee }}</td>
+                    <td>{{ $fee->course->duration }} Days <br> </td>
                     <td>
                         @if ($fee->payment_details)
                             <table class="table table-sm table-bordered">

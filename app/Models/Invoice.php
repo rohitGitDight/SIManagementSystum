@@ -12,7 +12,8 @@ class Invoice extends Model
     protected $fillable = [
         'user_id',
         'course_id',
-        'payment_details'
+        'payment_details',
+        'payment_type'
     ];
 
     protected $casts = [

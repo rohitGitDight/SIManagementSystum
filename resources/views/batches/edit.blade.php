@@ -54,7 +54,6 @@
                         value="{{ old('end_time', \Carbon\Carbon::parse($batch->end_time)->format('H:i')) }}">
                 </div>
             </div>
-            
 
             <div class="col-md-6">
                 <div class="form-group">
@@ -68,6 +67,14 @@
                     </select>
                 </div>
             </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label><strong>Batch Start Date:</strong></label>
+                    <input type="date" name="batch_start_date" class="form-control" 
+                        value="{{ old('batch_start_date', $batch->batch_start_date) }}">
+                </div>
+            </div>            
 
             <div class="col-md-12 text-center">
                 <button type="submit" class="btn btn-primary mt-2">

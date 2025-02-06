@@ -43,6 +43,17 @@
             </div>
         </div>
     </div>
+
+    @if (count($errors) > 0)
+        <div class="alert alert-danger">
+            <strong>Whoops!</strong> There were some problems with your input.<br><br>
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
     
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
@@ -53,6 +64,8 @@
 
         <!-- Hidden Inputs for User ID, Course ID, and Payment Type -->
         <input type="hidden" name="payment_type" value="{{ request('payment_type') }}">
+        <input type="hidden" name="payment_date" value="{{ request('payment_date') }}">
+        <input type="hidden" name="payment_amount" value="{{ request('amount') }}">
         @php
             // Helper function to get the English ordinal representation
             function getOrdinal($number) {
@@ -131,6 +144,11 @@
             <input type="text" name="cash_received_by" class="form-control">
         </div>
 
+        <div class="form-group">
+            <label for="payment_done_date">Payment Done Date</label>
+            <input type="date" name="payment_done_date" class="form-control" value="{{ old('payment_done_date') }}">
+        </div>
+
         <div class="form-group" id="transaction_report_div">
             <label for="transaction_report">Upload Transaction Report</label>
             <input type="file" name="transaction_report" class="form-control" accept="image/*">
@@ -190,14 +208,16 @@
         @if (!empty($studentCourseFeeDates))
             @foreach($studentCourseFeeDates as $feeDate)
                 <div class="alert alert-info text-center mt-3" style="font-size: 18px; font-weight: bold;">
-                        <p>📅 Next Payment Date: 
-                            <span class="text-primary">{{ $feeDate['future_payment_date'] }}
-                                @if(!empty($feeDate['future_payment_amount']))
-                                    <span>💰 Amount: <strong class="text-success">₹{{ number_format($feeDate['future_payment_amount'], 2) }}</strong></span>
-                                @endif
-                            </span>
-                        </p>
-                    </div>
+                    <p>📅 Next Payment Date: 
+                        <span class="text-primary">{{ $feeDate['future_payment_date'] }}
+                            @if(!empty($feeDate['future_payment_amount']))
+                                <span>💰 Amount: <strong class="text-success" >₹{{ number_format($feeDate['future_payment_amount'], 2) }}</strong></span>
+                            @endif
+                        </span>
+                    </p>
+                    <input type="hidden" name="next_payment_date" value="{{ $feeDate['future_payment_date'] }}">
+                    <input type="hidden" name="next_payment_amount" value="{{ number_format($feeDate['future_payment_amount'], 2) }}">
+                </div>
             @endforeach
         @else
             <div class="alert alert-info text-center mt-3" style="font-size: 18px; font-weight: bold;">

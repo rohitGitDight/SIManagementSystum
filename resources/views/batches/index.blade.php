@@ -32,6 +32,8 @@
                                 <th>Start Time</th>
                                 <th>End Time</th>
                                 <th>Course</th>
+                                <th>Batch Start Date</th>
+                                <th>Number Of Students</th>
                                 <th width="280px">Actions</th>
                             </tr>
                         </thead>
@@ -43,6 +45,11 @@
                                     <td>{{ \Carbon\Carbon::parse($batch->start_time)->format('h:i A') }}</td>
                                     <td>{{ \Carbon\Carbon::parse($batch->end_time)->format('h:i A') }}</td>
                                     <td>{{ $batch->course->name_of_course }}</td>
+                                    <td>{{ $batch->batch_start_date ? $batch->batch_start_date : "-" }}</td>
+                                    @php
+                                        $studentCount = \App\Models\UserDetail::where('student_batch' , $batch->id)->count();
+                                    @endphp
+                                    <td>{{ $studentCount ? $studentCount : '-' }}</td>
                                     <td>
                                         <a class="btn btn-info btn-sm" href="{{ route('batches.show', $batch) }}">
                                             <i class="fa-solid far fa-eye"></i>

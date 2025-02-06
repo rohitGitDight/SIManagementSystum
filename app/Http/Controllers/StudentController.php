@@ -40,7 +40,7 @@ class StudentController extends Controller
 
     public function create(){
         // Fetch courses from the 'courses' table
-        $courses = Course::all();
+        $courses = Course::where('is_active', 1)->get();
 
         // Pass the courses to the view
         return view('students.create', compact('courses'));
@@ -177,7 +177,7 @@ class StudentController extends Controller
 
         $courseId = $userDetail->course;
         // Fetch courses from the 'courses' table
-        $courses = Course::all();
+        $courses = Course::where('is_active' , 1)->get();
 
         $courseBatch = Batch::where('course_id',$courseId)->get();
 
@@ -229,10 +229,17 @@ class StudentController extends Controller
             'password' => $request->password ? Hash::make($request->password) : $user->password,
         ]);
 
+        $new_name = null;
+        if ($request->hasFile('image')) {
+            // Store the uploaded file in the public disk, under 'transaction_reports' folder
+            $new_name = $request->file('image')->store('transaction_reports', 'public');
+        }
+
         // Update the user_details table
         \DB::table('user_details')
             ->where('user_id', $id)
             ->update([
+                'image' => $new_name,
                 'dob' => $request->dob,
                 'married' => $request->married,
                 'contact' => $request->contact,

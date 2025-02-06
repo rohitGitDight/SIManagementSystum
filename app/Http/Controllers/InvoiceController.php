@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Invoice;
 use Illuminate\Http\Request;
 
+use Barryvdh\DomPDF\Facade\Pdf;
+
+
 class InvoiceController extends Controller
 {
     // app/Http/Controllers/InvoiceController.php
@@ -35,5 +38,18 @@ class InvoiceController extends Controller
         ]);
     }
 
+
+    public function generatePDF($id)
+    {
+        $invoice = Invoice::with(['user', 'course'])->findOrFail($id);
+        $paymentDetails = json_decode($invoice->payment_details, true);
+        $data = [
+            'invoice' => $invoice,
+            'paymentDetails' => $paymentDetails,
+        ];
+
+        $pdf = Pdf::loadView('invoices.pdf', $data);
+        return $pdf->download('invoice_' . $invoice->id . '.pdf');
+    }
 
 }

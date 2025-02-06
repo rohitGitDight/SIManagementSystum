@@ -61,6 +61,13 @@
                     </select>
                 </div>
             </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <strong>Batch Start Date:</strong>
+                    <input type="date" name="batch_start_date" placeholder="Batch Start Date" class="form-control"
+                        value="{{ old('batch_start_date') }}">
+                </div>
+            </div>
             <div class="col-md-12 text-center">
                 <button type="submit" class="btn btn-primary btn-sm mt-2 mb-3">
                     <i class="fa-solid fa-floppy-disk"></i> Submit

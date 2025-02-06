@@ -23,7 +23,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (json_decode($fee->payment_details, true) as $payment)
+                        @foreach (json_decode($fee->payment_details, true) as $key => $payment)
                             <tr>
                                 <td>{{ \Carbon\Carbon::parse($payment['payment_date'])->format('d-m-Y') }}</td>
                                 <td>₹{{ number_format($payment['payment'], 2) }}</td>
@@ -34,8 +34,21 @@
                                         <span class="badge bg-success">Paid</span>
                                     @endif
                                 </td>
+                                <td>
+                                    <a href="{{ route('student_fee_transactions.create', [
+                                            'user_id' => $fee->user->id, 
+                                            'course_id' => $fee->course->id, 
+                                            'payment_type' => $key + 1, 
+                                            'amount' => $payment['payment'], 
+                                            'remaining_amount' => $fee->remaining_amount, 
+                                            'payment_date' => $payment['payment_date']
+                                        ]) }}" class="btn btn-primary btn-sm">
+                                        <i class="fa fa-plus" aria-hidden="true"></i>
+                                    </a>
+                                </td>
                             </tr>
                         @endforeach
+
                     </tbody>
                 </table>
 

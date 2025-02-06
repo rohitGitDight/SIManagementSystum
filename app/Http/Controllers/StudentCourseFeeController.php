@@ -10,9 +10,15 @@ class StudentCourseFeeController extends Controller
 {
     public function index()
     {
-        $fees = StudentCourseFee::with('user', 'course')->get();
+        $fees = StudentCourseFee::with(['user' => function ($query) {
+            $query->where('is_active', 1);
+        }, 'course'])->get()->filter(function ($fee) {
+            return $fee->user !== null; // Remove records where user is null
+        });
+
         return view('student_course_fees.index', compact('fees'));
     }
+
 
     public function show($id)
     {

@@ -28,9 +28,10 @@ class BatchController extends Controller
             'start_time' => 'required|date_format:H:i', // Validate start time
             'end_time' => 'required|date_format:H:i|after:start_time', // Validate end time
             'course_id' => 'required|exists:courses,id',
+            'batch_start_date' => 'required|after_or_equal:today', // Ensure it's a valid date
         ]);
 
-        Batch::create($request->only(['batch_name', 'start_time', 'end_time', 'course_id']));
+        Batch::create($request->only(['batch_name', 'start_time', 'end_time', 'course_id' , 'batch_start_date']));
         return redirect()->route('batches.index')->with('success', 'Batch created successfully.');
     }
 
@@ -47,11 +48,14 @@ class BatchController extends Controller
             'start_time' => 'required|date_format:H:i',
             'end_time' => 'required|date_format:H:i|after:start_time',
             'course_id' => 'required|exists:courses,id',
+            'batch_start_date' => 'required|date',
         ]);
 
-        $batch->update($request->only(['batch_name', 'start_time', 'end_time', 'course_id']));
+        $batch->update($request->only(['batch_name', 'start_time', 'end_time', 'course_id', 'batch_start_date']));
+
         return redirect()->route('batches.index')->with('success', 'Batch updated successfully.');
     }
+
 
     public function destroy(Batch $batch)
     {

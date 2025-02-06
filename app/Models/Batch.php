@@ -10,7 +10,7 @@ class Batch extends Model
     use HasFactory;
 
     // Specify the attributes that are mass assignable
-    protected $fillable = ['batch_name', 'start_time', 'end_time', 'course_id'];
+    protected $fillable = ['batch_name', 'start_time', 'end_time', 'course_id' , 'batch_start_date'];
 
     /**
      * Relationship: A batch belongs to a course
