@@ -198,6 +198,13 @@
                 </div>
             </div>
 
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label><strong>Aadhaar Card Number:</strong></label>
+                    <input type="text" name="aadhaar_card_number" id="aadhaarCardNumber" class="form-control" placeholder="Aadhaar Card Number" value="{{ old('aadhaar_card_number', $details->aadhaar_card_number ?? '') }}">
+                </div>
+            </div>
+
             <div class="col-xs-12 col-sm-12 col-md-6">
                 <div class="form-group">
                     <strong>Upload Profile Image:</strong>

@@ -76,6 +76,7 @@
                                                         {{-- class="btn btn-primary btn-sm {{ $disabled }}" {{ $disabled }}> --}}
                                                         <i class="fa fa-plus" aria-hidden="true"></i>
                                                     </a>
+                                                    
                                                 @endif
                                             </td>
                                         </tr>

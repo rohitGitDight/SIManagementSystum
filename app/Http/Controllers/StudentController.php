@@ -75,7 +75,7 @@ class StudentController extends Controller
             'student_batch' => 'nullable|integer|max:255',
             'batch_professor' => 'nullable|string|max:255',
             'fee' => 'nullable|numeric',
-            'aadhaar_card_number' => 'nullable|string|max:16|unique:user_details,aadhaar_card_number',
+            'aadhaar_card_number' => 'nullable|string|min:16|max:16|unique:user_details,aadhaar_card_number',
             'course_start_date' => 'nullable|date'
         ]);
 
@@ -217,7 +217,7 @@ class StudentController extends Controller
             'student_batch' => 'nullable|integer|max:255',
             'batch_professor' => 'nullable|string|max:255',
             'fee' => 'nullable|numeric',
-            'aadhaar_card_number' => 'nullable|string|max:16|unique:user_details,aadhaar_card_number,' . $id . ',user_id',
+            'aadhaar_card_number' => 'nullable|string|min:16|max:16|unique:user_details,aadhaar_card_number,' . $id . ',user_id',
             'course_start_date' => 'nullable|date'
         ]);
 

@@ -64,7 +64,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');
 
     Route::get('/invoices/pdf/{id}', [InvoiceController::class, 'generatePDF'])->name('invoices.pdf');
-    
+
 });
 
 require __DIR__ . '/auth.php';

@@ -19,7 +19,9 @@
         .balance-section { background: #e8f5e9; }
         .section-header { font-size: 20px; font-weight: bold; margin-bottom: 10px; text-align: center; }
         .separator { margin: 30px 0; border-top: 2px dashed #ccc; }
-        p { font-size: 16px; margin: 5px 0; }
+        table { width: 100%; border-collapse: collapse; }
+        table, th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background: #f5f5f5; }
         .footer { text-align: center; margin-top: 20px; font-size: 14px; color: #666; }
     </style>
 </head>
@@ -31,43 +33,42 @@
         </div>
 
         @foreach($paymentDetailsArray as $index => $paymentDetails)
-            <div class="separator"></div> <!-- Divider Between Sections -->
+            <div class="separator"></div>
+            <div class="section-header">Payment {{ $index + 1 }}</div>
 
-            <div class="section-header">Payment Section {{ $index + 1 }}</div>
-
-            <!-- Payment Details Section -->
             <div class="section payment-section">
                 <h3>Payment Details</h3>
-                <p><strong>User Name:</strong> {{ $invoice->user->name }}</p>
-                <p><strong>Course Name:</strong> {{ $invoice->course->name_of_course }}</p>
-                <p><strong>Payment Type:</strong> {{ ucfirst($paymentDetails['transaction_type']) }}</p>
-                <p><strong>Amount Paid:</strong> {{ number_format((float) $paymentDetails['amount'], 2) }}</p>
+                <table>
+                    <tr><th>User Name</th><td>{{ $invoice->user->name }}</td></tr>
+                    <tr><th>Course Name</th><td>{{ $invoice->course->name_of_course }}</td></tr>
+                    <tr><th>Payment Type</th><td>{{ ucfirst($paymentDetails['transaction_type']) }}</td></tr>
+                    <tr><th>Amount Paid</th><td>{{ number_format((float) $paymentDetails['amount'], 2) }}</td></tr>
+                </table>
             </div>
 
-            <!-- Debited Details Section -->
             <div class="section debit-section">
                 <h3>Debited Details</h3>
-                <p><strong>Cash Received By:</strong> {{ $paymentDetails['cash_received_by'] ?? 'N/A' }}</p>
-                <p><strong>Transaction ID:</strong> {{ $paymentDetails['transaction_id'] ?? 'N/A' }}</p>
-                <p><strong>Cheque Number:</strong> {{ $paymentDetails['cheque_number'] ?? 'N/A' }}</p>
-                @if(!empty($paymentDetails['transaction_report']) && $paymentDetails['transaction_report'] !== 'N/A')
-                    <p><strong>Transaction Report:</strong> 
-                        <a href="{{ asset('images/'.$paymentDetails['transaction_report']) }}" target="_blank">View Report</a>
-                    </p>
-                @endif
+                <table>
+                    <tr><th>Cash Received By</th><td>{{ $paymentDetails['cash_received_by'] ?? 'N/A' }}</td></tr>
+                    <tr><th>Transaction ID</th><td>{{ $paymentDetails['transaction_id'] ?? 'N/A' }}</td></tr>
+                    <tr><th>Cheque Number</th><td>{{ $paymentDetails['cheque_number'] ?? 'N/A' }}</td></tr>
+                    @if(!empty($paymentDetails['transaction_report']) && $paymentDetails['transaction_report'] !== 'N/A')
+                        <tr><th>Transaction Report</th>
+                            <td><a href="{{ asset('images/'.$paymentDetails['transaction_report']) }}" target="_blank">View Report</a></td>
+                        </tr>
+                    @endif
+                </table>
             </div>
 
-            <!-- Balance & Dates Section -->
             <div class="section balance-section">
                 <h3>Balance & Dates</h3>
-                <p><strong>Payment Done Date:</strong> {{ $paymentDetails['payment_done_date'] ?? 'N/A' }}</p>
-                <br>
-                <p><strong>Pending Amount Of This Transaction:</strong> <span style="color: red;">{{ number_format((float) $paymentDetails['pending_amount'], 2) }}</span></p>
-                <p><strong>Remaining Amount:</strong> <span style="color: red;">{{ number_format((float) $paymentDetails['remaining_amount'], 2) }}</span></p>
-                <p><strong>Next Payment Date:</strong> {{ $paymentDetails['next_payment_date'] ?? 'N/A' }}</p>
-                <p><strong>Next Payment Amount:</strong> 
-                    {{ !empty($paymentDetails['next_payment_amount']) ? $paymentDetails['next_payment_amount'] : 'N/A' }}
-                </p>
+                <table>
+                    <tr><th>Payment Done Date</th><td>{{ $paymentDetails['payment_done_date'] ?? 'N/A' }}</td></tr>
+                    <tr><th>Pending Amount</th><td style="color: red;">{{ number_format((float) $paymentDetails['pending_amount'], 2) }}</td></tr>
+                    <tr><th>Remaining Amount</th><td style="color: red;">{{ number_format((float) $paymentDetails['remaining_amount'], 2) }}</td></tr>
+                    <tr><th>Next Payment Date</th><td>{{ $paymentDetails['next_payment_date'] ?? 'N/A' }}</td></tr>
+                    <tr><th>Next Payment Amount</th><td>{{ !empty($paymentDetails['next_payment_amount']) ? $paymentDetails['next_payment_amount'] : 'N/A' }}</td></tr>
+                </table>
             </div>
         @endforeach
 
