@@ -163,66 +163,97 @@ class StudentFeeTransactionController extends Controller {
         return view('student_fee_transactions.edit', compact('students', 'courses', 'transaction'));
     }
 
-    public function update(Request $request, $id)
-    {
-        // Validate the request
-        $request->validate([
+    public function update(Request $request, $id) {
+
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required|exists:users,id',
+            'course_id' => 'required|exists:courses,id',
             'transaction_type' => 'required|string',
-            'transaction_id' => 'nullable|string',
-            'cheque_number' => 'nullable|string',
-            'cash_received_by' => 'nullable|string',
-            'transaction_report' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
             'amount' => 'required|numeric|min:0',
-            'payment_done_date' => 'required|date', // Ensure it is a valid date
-        ]);
-
-        // Find the transaction
-        $transaction = StudentFeeTransaction::findOrFail($id);
-
-        // Handle file upload
-        if ($request->hasFile('transaction_report')) {
-            $file = $request->file('transaction_report');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->storeAs('transaction_reports', $filename, 'public');
-
-            // Delete old file if it exists
-            if ($transaction->transaction_report) {
-                Storage::disk('public')->delete('transaction_reports/' . $transaction->transaction_report);
-            }
-
-            $transaction->transaction_report = $filename;
-        }
-
-        // Update transaction details
-        $transaction->transaction_type = $request->transaction_type;
-        $transaction->transaction_id = $request->transaction_id;
-        $transaction->cheque_number = $request->cheque_number;
-        $transaction->cash_received_by = $request->cash_received_by;
-        $transaction->amount = $request->amount;
-        $transaction->payment_done_date = $request->payment_done_date;
-
-        // Save the changes
-        $transaction->save();
-
-        // Redirect with success message
-        return redirect()->route('student_fee_transactions.index')->with('success', 'Transaction updated successfully!');
-    }
-
-    public function createInvoice_old($data){
-        $paymentDetails = $data['payment_details'];
-        
-        // Ensure payment details is in proper JSON format
-        $paymentDetailsJson = json_encode($paymentDetails);
-        
-        // Create the invoice
-        $invoice = Invoice::create([
-            'user_id' => $data['user_id'],
-            'course_id' => $data['course_id'],
-            'payment_details' => $paymentDetailsJson, // Store payment details as JSON
+            'payment_type' => 'required|integer',
+            'transaction_report' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'transaction_id'   => 'nullable|required_without_all:cheque_number,cash_received_by',
+            'cheque_number'    => 'nullable|required_without_all:transaction_id,cash_received_by',
+            'cash_received_by' => 'nullable|required_without_all:transaction_id,cheque_number',
+            'payment_done_date' => 'required|date',
         ]);
     
-        return response()->json($invoice, 201);
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+    
+        $transaction = StudentFeeTransaction::findOrFail($id);
+        
+        $filePath = $transaction->transaction_report;
+        if ($request->hasFile('transaction_report')) {
+            $filePath = $request->file('transaction_report')->store('uploads', 'public');
+        }
+        
+        // $transaction->update([
+        //     'user_id' => $request->user_id,
+        //     'course_id' => $request->course_id,
+        //     'transaction_type' => $request->transaction_type,
+        //     'transaction_id' => $request->transaction_id,
+        //     'cheque_number' => $request->cheque_number,
+        //     'cash_received_by' => $request->cash_received_by,
+        //     'transaction_report' => $filePath,
+        //     'amount' => $request->amount,
+        //     'payment_type' => $request->payment_type,
+        //     'payment_done_date' => $request->payment_done_date,
+        // ]);
+    
+        $studentCourseFee = StudentCourseFee::where('user_id', $request->user_id)
+            ->where('course_id', $request->course_id)
+            ->first();
+
+            
+        if ($studentCourseFee) {
+            $paymentDetails = json_decode($studentCourseFee->payment_details, true);
+            $index = $request->payment_type - 1;
+            
+            if (isset($paymentDetails[$index])) {
+                $paymentDetails[$index]['payment'] = $request->amount - $paymentDetails[$index]['payment'];
+                if ($paymentDetails[$index]['payment'] == 0) {
+                    $paymentDetails[$index]['payment_status'] = 1;
+                }
+                
+                if($paymentDetails[$index]['payment'] != 0){
+                    $paymentDetails[$index]['payment_status'] = 0;
+                }
+                // $studentCourseFee->update([ 'payment_details' => json_encode($paymentDetails) ]);
+            }
+    
+            $remainingAmount = array_sum(array_column($paymentDetails, 'payment')) - $request->amount;
+            // $studentCourseFee->update([ 'remaining_amount' => $remainingAmount ]);
+        }
+        
+        $pendingAmount = $request->amount - $request->payment_amount;
+        $data = [
+            'user_id' => $request->user_id,
+            'course_id' => $request->course_id,
+            'payment_details' => [
+                'transaction_type' => $request->transaction_type,
+                'transaction_id' => $request->transaction_id,
+                'cheque_number' => $request->cheque_number,
+                'cash_received_by' => $request->cash_received_by,
+                'transaction_report' => $filePath,
+                'amount' => $request->amount,
+                'payment_type' => $request->payment_type,
+                'payment_date' => $request->payment_date,
+                'pending_amount' => $pendingAmount,
+                'next_payment_date' => $request->next_payment_date ?? '-',
+                'next_payment_amount' => $request->next_payment_amount ?? '0',
+                'remaining_amount' => $remainingAmount ?? '0',
+                'payment_done_date' => $request->payment_done_date,
+            ],
+            'payment_type' => $request->payment_type
+        ];
+
+        // $this->createInvoice($data);
+    
+        return redirect()->route('student_fee_transactions.index')->with('success', 'Fee transaction updated successfully!');
     }
+    
 
     public function createInvoice($data){
         // Check if an invoice already exists for the given criteria
@@ -261,6 +292,5 @@ class StudentFeeTransactionController extends Controller {
             return response()->json(['message' => 'Invoice created successfully', 'invoice' => $invoice], 201);
         }
     }
-
     
 }

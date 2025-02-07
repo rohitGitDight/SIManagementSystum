@@ -64,7 +64,7 @@
                 <h3>Balance & Dates</h3>
                 <table>
                     <tr><th>Payment Done Date</th><td>{{ $paymentDetails['payment_done_date'] ?? 'N/A' }}</td></tr>
-                    <tr><th>Pending Amount</th><td style="color: red;">{{ number_format((float) $paymentDetails['pending_amount'], 2) }}</td></tr>
+                    <tr><th>Pending Amount Of This Transaction</th><td style="color: red;">{{ number_format((float) $paymentDetails['pending_amount'], 2) }}</td></tr>
                     <tr><th>Remaining Amount</th><td style="color: red;">{{ number_format((float) $paymentDetails['remaining_amount'], 2) }}</td></tr>
                     <tr><th>Next Payment Date</th><td>{{ $paymentDetails['next_payment_date'] ?? 'N/A' }}</td></tr>
                     <tr><th>Next Payment Amount</th><td>{{ !empty($paymentDetails['next_payment_amount']) ? $paymentDetails['next_payment_amount'] : 'N/A' }}</td></tr>

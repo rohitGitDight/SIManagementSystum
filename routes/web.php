@@ -54,9 +54,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/student_fee_transactions/create', [StudentFeeTransactionController::class, 'create'])->name('student_fee_transactions.create');
     Route::post('/student_fee_transactions/store', [StudentFeeTransactionController::class, 'store'])->name('student_fee_transactions.store');
     
+    Route::resource('student_fee_transactions', StudentFeeTransactionController::class);
     Route::get('/student-course-fees', [StudentCourseFeeController::class, 'index'])->name('student_course_fees.index');
     Route::get('student_course_fees/{id}', [StudentCourseFeeController::class, 'show'])->name('student_course_fees.show');
-    
+    Route::get('student_fee_transactions/{id}/edit', [StudentFeeTransactionController::class, 'edit'])->name('student_fee_transactions.edit');
+    Route::put('student_fee_transactions/{student_fee_transaction}', [StudentFeeTransactionController::class, 'update'])->name('student_fee_transactions.update');
+
     Route::get('/student-course-fees/calendar', [CalendarController::class, 'index'])->name('student_course_fees.calendar');
 
     Route::post('/invoices', [InvoiceController::class, 'store']);

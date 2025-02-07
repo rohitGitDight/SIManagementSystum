@@ -26,6 +26,7 @@
                 <th>Amount</th>
                 <th>Transaction Report</th>
                 <th>Created At</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
@@ -58,6 +59,9 @@
                         @endif
                     </td>
                     <td>{{ $transaction->created_at}}</td>
+                    <td>
+                        <a href="{{ route('student_fee_transactions.edit', $transaction->id) }}" class="btn btn-primary btn-sm">Edit</a>
+                    </td>
                 </tr>
             @endforeach
         </tbody>

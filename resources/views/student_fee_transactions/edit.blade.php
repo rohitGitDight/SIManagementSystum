@@ -1,5 +1,8 @@
 @extends('layouts.app')
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
+</head>
 @section('content')
 <div class="container">
     <h2>Edit Fee Transaction</h2>
@@ -82,7 +85,8 @@
 
         <div class="form-group">
             <label for="amount">Amount Paid</label>
-            <input type="number" name="amount" class="form-control" value="{{ $transaction->amount }}" required>
+            <input type="number" name="amount" id="amount" class="form-control" value="{{ $transaction->amount }}" max="{{ $transaction->amount }}" oninput="checkAmount()" required>
+            <span id="error-message" class="text-danger" style="display:none;">only: ₹{{ $transaction->amount }}</span>
         </div>
 
         <button type="submit" class="btn btn-primary">Update</button>
@@ -90,7 +94,7 @@
 </div>
 
 <script>
-    $(document).ready(function() {
+    jQuery(document).ready(function($) {
         function updateFields() {
             var selectedValue = $('#transaction_type').val();
 
@@ -112,6 +116,23 @@
         $('#transaction_type').on('change', updateFields);
         updateFields();
     });
+
+    function checkAmount() {
+        const amountField = document.getElementById('amount');
+        const errorMessage = document.getElementById('error-message');
+        const maxAmount = amountField ? parseFloat(amountField.max) || 0 : 0; 
+        const enteredAmount = parseFloat(amountField.value) || 0;
+
+        // Check if the entered amount is greater than the limit
+        if (enteredAmount > maxAmount) {
+            errorMessage.style.display = 'inline';  // Show the error message
+            errorMessage.textContent = `Amount cannot exceed ${maxAmount}`; // Show message
+            amountField.value = number_format(maxAmount, 2, '.', '') ;         // Set the value to the max limit
+        } else {
+            errorMessage.style.display = 'none';   // Hide the error message if the value is within the limit
+        }
+    }
+
 </script>
 
 @endsection
