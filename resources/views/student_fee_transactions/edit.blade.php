@@ -1,7 +1,6 @@
 @extends('layouts.app')
 <head>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-
 </head>
 @section('content')
 <div class="container">
@@ -17,6 +16,7 @@
 
         <!-- Hidden Inputs for User ID, Course ID, and Payment Type -->
         <input type="hidden" name="payment_type" value="{{ $transaction->payment_type }}">
+        <input type="hidden" name="transaction_amount" value="{{ $transaction->amount }}">
     
         <div class="form-group">
             <label for="user_id">Student</label>
@@ -46,7 +46,7 @@
             <input type="hidden" name="course_id" value="{{ $transaction->course_id }}">
         </div>
 
-        <div class="form-group">
+        {{-- <div class="form-group">
             <label for="transaction_type">Transaction Type</label>
             <select name="transaction_type" class="form-control" id="transaction_type" required>
                 <option value="Cheque" {{ $transaction->transaction_type == 'Cheque' ? 'selected' : '' }}>Cheque</option>
@@ -56,14 +56,14 @@
                 <option value="RTGS" {{ $transaction->transaction_type == 'RTGS' ? 'selected' : '' }}>RTGS</option>
                 <option value="Bank Transfer" {{ $transaction->transaction_type == 'Bank Transfer' ? 'selected' : '' }}>Bank Transfer</option>
             </select>
-        </div>
+        </div> --}}
 
-        <div class="form-group" id="transaction_id_div">
+        {{-- <div class="form-group" id="transaction_id_div">
             <label for="transaction_id">Transaction ID (if applicable)</label>
             <input type="text" name="transaction_id" class="form-control" value="{{ $transaction->transaction_id }}">
-        </div>
+        </div> --}}
 
-        <div class="form-group" id="cheque_number_div" style="display: none;">
+        {{-- <div class="form-group" id="cheque_number_div" style="display: none;">
             <label for="cheque_number">Cheque Number</label>
             <input type="text" name="cheque_number" class="form-control" value="{{ $transaction->cheque_number }}">
         </div>
@@ -81,13 +81,27 @@
         <div class="form-group" id="transaction_report_div">
             <label for="transaction_report">Upload Transaction Report</label>
             <input type="file" name="transaction_report" class="form-control" accept="image/*">
-        </div>
+        </div> --}}
 
         <div class="form-group">
             <label for="amount">Amount Paid</label>
-            <input type="number" name="amount" id="amount" class="form-control" value="{{ $transaction->amount }}" max="{{ $transaction->amount }}" oninput="checkAmount()" required>
-            <span id="error-message" class="text-danger" style="display:none;">only: ₹{{ $transaction->amount }}</span>
+            @php
+                $transactionRemaing = \App\Models\StudentCourseFee::where([
+                    'user_id' => $transaction->user_id,
+                    'course_id' => $transaction->course_id
+                ])->first();
+            @endphp
+            <input type="number" name="amount" id="amount" class="form-control" 
+                value="{{ $transaction->amount }}" 
+                max="{{ $transaction->payment_type_target }}" 
+                step="0.01"
+                oninput="checkAmount()" required>
+            
+            <span id="error-message" class="text-danger" style="display:none;">
+                Maximum allowed: ₹{{ number_format($transactionRemaing->remaining_amount, 2) }}
+            </span>
         </div>
+        
 
         <button type="submit" class="btn btn-primary">Update</button>
     </form>
@@ -120,18 +134,27 @@
     function checkAmount() {
         const amountField = document.getElementById('amount');
         const errorMessage = document.getElementById('error-message');
-        const maxAmount = amountField ? parseFloat(amountField.max) || 0 : 0; 
-        const enteredAmount = parseFloat(amountField.value) || 0;
+        
+        if (!amountField) return;
 
-        // Check if the entered amount is greater than the limit
+        const maxAmount = parseFloat(amountField.max) || 0; 
+        let enteredAmount = parseFloat(amountField.value) || 0;
+
+        // Check if entered amount exceeds the limit
         if (enteredAmount > maxAmount) {
             errorMessage.style.display = 'inline';  // Show the error message
-            errorMessage.textContent = `Amount cannot exceed ${maxAmount}`; // Show message
-            amountField.value = number_format(maxAmount, 2, '.', '') ;         // Set the value to the max limit
+            errorMessage.textContent = `Amount cannot exceed ₹${maxAmount.toFixed(2)}`; // Show message
+            amountField.value = maxAmount.toFixed(2); // Auto-correct the value
         } else {
-            errorMessage.style.display = 'none';   // Hide the error message if the value is within the limit
+            errorMessage.style.display = 'none';   // Hide the error message if the value is valid
+        }
+
+        // Prevent negative values
+        if (enteredAmount < 0) {
+            amountField.value = '0.00';
         }
     }
+
 
 </script>
 

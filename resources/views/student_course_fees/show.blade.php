@@ -34,17 +34,22 @@
                                         <span class="badge bg-success">Paid</span>
                                     @endif
                                 </td>
+
                                 <td>
-                                    <a href="{{ route('student_fee_transactions.create', [
-                                            'user_id' => $fee->user->id, 
-                                            'course_id' => $fee->course->id, 
-                                            'payment_type' => $key + 1, 
-                                            'amount' => $payment['payment'], 
-                                            'remaining_amount' => $fee->remaining_amount, 
-                                            'payment_date' => $payment['payment_date']
-                                        ]) }}" class="btn btn-primary btn-sm">
-                                        <i class="fa fa-plus" aria-hidden="true"></i>
-                                    </a>
+                                    @if($payment['payment'] > 0)    
+                                        <a href="{{ route('student_fee_transactions.create', [
+                                                'user_id' => $fee->user->id, 
+                                                'course_id' => $fee->course->id, 
+                                                'payment_type' => $key + 1, 
+                                                'amount' => $payment['payment'], 
+                                                'remaining_amount' => $fee->remaining_amount, 
+                                                'payment_date' => $payment['payment_date']
+                                            ]) }}" class="btn btn-primary btn-sm">
+                                            <i class="fa fa-plus" aria-hidden="true"></i>
+                                        </a>    
+                                    @else
+                                        <span style="color: green; font-weight: bold;">Complete <i class="fas fa-check-circle" style="color: green;"></i></span>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

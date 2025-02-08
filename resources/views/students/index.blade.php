@@ -44,13 +44,12 @@
                                                 class="fa-solid far fa-eye"></i></a>
                                         <a class="btn btn-primary btn-sm" href="{{ route('students.edit', $user->id) }}"><i
                                                 class="fa-solid far fa-edit"></i></a>
-                                        <form method="POST" action="{{ route('students.destroy', $user->id) }}"
-                                            style="display:inline">
+                                        <form method="POST" action="{{ route('students.destroy', $user->id) }}" class="delete-form" style="display:inline">
                                             @csrf
                                             @method('DELETE')
-
-                                            <button type="submit" class="btn btn-danger btn-sm"><i
-                                                    class="fa-solid fas fa-trash-alt"></i>
+                                        
+                                            <button type="button" class="btn btn-danger btn-sm delete-btn">
+                                                <i class="fa-solid fas fa-trash-alt"></i>
                                             </button>
                                         </form>
                                     </td>
@@ -63,4 +62,31 @@
         </div>
     </div>
     {{-- {!! $data->links('pagination::bootstrap-5') !!} --}}
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', function(event) {
+                let form = this.closest('.delete-form');
+                
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+    });
+</script>
+
 @endsection

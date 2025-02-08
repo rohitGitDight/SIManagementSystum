@@ -347,7 +347,8 @@ class StudentController extends Controller
             $installments[] = [
                 'payment' => round($paymentAmount, 2),
                 'payment_date' => $startDate->copy()->addDays($intervalDays * $i)->format('Y-m-d'),
-                'payment_status' => 0 // Default status
+                'payment_status' => 0, // Default status
+                'payment_check' => round($paymentAmount, 2) // Default status
             ];
         }
         $courseFee = $userDetail->fee;
@@ -393,7 +394,8 @@ class StudentController extends Controller
             $installments[] = [
                 'payment' => round($paymentAmount, 2),
                 'payment_date' => $startDate->copy()->addDays($intervalDays * $i)->format('Y-m-d'),
-                'payment_status' => 0 // Default status
+                'payment_status' => 0, // Default status
+                'payment_check' => round($paymentAmount, 2) // Default status
             ];
         }
 

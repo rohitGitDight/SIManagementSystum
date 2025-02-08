@@ -26,7 +26,7 @@
                 <th>Amount</th>
                 <th>Transaction Report</th>
                 <th>Created At</th>
-                <th>Action</th>
+                {{-- <th>Action</th> --}}
             </tr>
         </thead>
         <tbody>
@@ -51,6 +51,10 @@
                     <td>{{ $transaction->cheque_number ?? '-' }}</td>
                     <td>{{ $transaction->cash_received_by ?? '-' }}</td>
                     <td>₹{{ number_format($transaction->amount, 2) }}</td>
+                    <?php 
+                    $remainingAmount = $transaction->payment_type_target - $transaction->amount; 
+                    $remainingAmountDone = $transaction->payment_type_target + $remainingAmount; 
+                    ?>
                     <td>
                         @if($transaction->transaction_report)
                         <a href="{{ asset('images/' . $transaction->transaction_report) }}" target="_blank">View Report</a>
@@ -59,9 +63,9 @@
                         @endif
                     </td>
                     <td>{{ $transaction->created_at}}</td>
-                    <td>
+                    {{-- <td>
                         <a href="{{ route('student_fee_transactions.edit', $transaction->id) }}" class="btn btn-primary btn-sm">Edit</a>
-                    </td>
+                    </td> --}}                 
                 </tr>
             @endforeach
         </tbody>

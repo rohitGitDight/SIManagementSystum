@@ -18,6 +18,7 @@ class StudentFeeTransaction extends Model {
         'transaction_report',
         'amount',
         'payment_type',
+        'payment_type_target',
         'payment_done_date'
     ];
 
