@@ -22,8 +22,8 @@
             <label for="user_id">Student</label>
             <select name="user_id_disabled" class="form-control" disabled>
                 <option value="">Select Student</option>
-                @foreach($students as $student) 
-                    <option value="{{ $student->id }}" 
+                @foreach($students as $student)
+                    <option value="{{ $student->id }}"
                         {{ ($transaction->user_id == $student->id) ? 'selected' : '' }}>
                         {{ $student->name }}
                     </option>

@@ -14,6 +14,7 @@
                 <th>Payment Details</th>
                 <th>Remaining Amount</th>
                 <th>Created At</th>
+                <th>Updated At</th>
             </tr>
         </thead>
         <tbody>
@@ -110,7 +111,8 @@
                         @endif
                     </td>
                     <td>{{ $fee->remaining_amount }}</td>
-                    <td>{{ $fee->created_at->format('Y-m-d') }}</td>
+                    <td>{{ $fee->created_at->format('Y-m-d H:i:s') }}</td>
+                    <td>{{ $fee->updated_at->format('Y-m-d H:i:s') }}</td>
                 </tr>
             @endforeach
         </tbody>
