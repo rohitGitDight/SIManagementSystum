@@ -11,6 +11,8 @@ use App\Http\Controllers\StudentFeeTransactionController;
 use App\Http\Controllers\StudentCourseFeeController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\UserController;
+
 use Illuminate\Support\Facades\Auth;
 
 
@@ -34,6 +36,8 @@ Route::middleware('auth')->group(function () {
 
     // Users
     Route::resource('students', StudentController::class);
+
+    Route::resource('users', UserController::class);
 
     // Batches 
     Route::resource('batches', BatchController::class);

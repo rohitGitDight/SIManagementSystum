@@ -47,9 +47,9 @@ class RoleController extends Controller
     public function store(Request $request)
     {
 
-        if (!Auth::user()->hasPermissionTo('add role')) {
-            abort(403, 'Unauthorized action.');
-        }
+        // if (!Auth::user()->hasPermissionTo('add role')) {
+        //     abort(403, 'Unauthorized action.');
+        // }
 
         $this->validate($request, [
             'name' => 'required|unique:roles,name',
@@ -75,19 +75,35 @@ class RoleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    // public function show($id): View
+    // {
+    //     if (!Auth::user()->hasPermissionTo('view role')) {
+    //         abort(403, 'Unauthorized action.');
+    //     }
+
+    //     $role = Role::find($id);
+    //     $rolePermissions = Permission::join("role_has_permissions", "role_has_permissions.permission_id", "=", "permissions.id")
+    //         ->where("role_has_permissions.role_id", $id)
+    //         ->get();
+
+    //     return view('roles.show', compact('role', 'rolePermissions'));
+    // }
+
     public function show($id): View
     {
         if (!Auth::user()->hasPermissionTo('view role')) {
             abort(403, 'Unauthorized action.');
         }
 
-        $role = Role::find($id);
+        $role = Role::with(['users'])->findOrFail($id);
         $rolePermissions = Permission::join("role_has_permissions", "role_has_permissions.permission_id", "=", "permissions.id")
             ->where("role_has_permissions.role_id", $id)
             ->get();
 
         return view('roles.show', compact('role', 'rolePermissions'));
     }
+
+
 
     /**
      * Show the form for editing the specified resource.

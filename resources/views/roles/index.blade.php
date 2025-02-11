@@ -7,10 +7,8 @@
                 <h2>Role Management</h2>
             </div>
             <div class="pull-right">
-                @can('role-create')
                     <a class="btn btn-success btn-sm mb-2" href="{{ route('roles.create') }}"><i class="fa fa-plus"></i> Create New
                         Role</a>
-                @endcan
             </div>
         </div>
     </div>
@@ -49,13 +47,13 @@
                                                     class="fa-solid far fa-edit"></i> </a>
                                         {{-- @endcan --}}
 
-                                        @can('role-delete')
+                                        @can('delete role')
                                             <form method="POST" action="{{ route('roles.destroy', $role->id) }}"
                                                 style="display:inline">
                                                 @csrf
                                                 @method('DELETE')
 
-                                                <button type="submit" class="btn btn-danger btn-sm"><i
+                                                <button type="submit" class="btn btn-danger btn-sm delete-btn"><i
                                                         class="fa-solid fas fa-trash-alt"></i>
                                                 </button>
                                             </form>
@@ -69,6 +67,33 @@
             </div>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', function(event) {
+                    event.preventDefault(); // Prevent form submission
+                    
+                    let form = this.closest('form'); // Get the closest form
+                    
+                    Swal.fire({
+                        title: "Are you sure?",
+                        text: "Are you absolutely sure you want to delete this?",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#d33",
+                        cancelButtonColor: "#3085d6",
+                        confirmButtonText: "Yes, delete it!"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit(); // Submit the form if confirmed
+                        }
+                    });
+                });
+            });
+        });
+
+    </script>
     {{-- {!! $roles->links('pagination::bootstrap-5') !!} --}}
 @endsection

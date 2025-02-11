@@ -210,6 +210,15 @@
                         </li>
                         @endcanany
 
+                        @canany(['view student', 'view student list'])
+                            <li class="nav-item">
+                                <a href="{{ route('users.index') }}">
+                                    <i class="fas fa-users"></i>
+                                    <p>User Management</p>
+                                </a>
+                            </li>
+                        @endcanany
+
                         <!-- Role Management (Super Admin Only) -->
                         @canany(['view role', 'view role list'])
                         <li class="nav-item">

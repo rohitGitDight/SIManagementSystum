@@ -18,7 +18,7 @@ class PermissionSeeder extends Seeder
             'add student', 'edit student', 'view student', 'delete student', 'view student list',
             
             // Role Permissions
-            'view role', 'edit role', 'view role list',
+            'view role', 'edit role', 'view role list', 'delete role',
             
             // Batch Permissions
             'view batch', 'add batch', 'edit batch', 'delete batch', 'view batch list',
