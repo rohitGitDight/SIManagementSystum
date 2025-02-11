@@ -16,11 +16,10 @@ use App\Models\Course;
 use App\Models\Batch; // Assuming you have a Batch model
 use Carbon\Carbon;
 use App\Models\StudentCourseFee;
-
+use Illuminate\Support\Facades\Auth;
 
 class StudentController extends Controller
 {
-
     //
     public function index(Request $request): View{
         // Fetch only active users and paginate

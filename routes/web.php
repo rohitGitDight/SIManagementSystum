@@ -11,6 +11,8 @@ use App\Http\Controllers\StudentFeeTransactionController;
 use App\Http\Controllers\StudentCourseFeeController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\InvoiceController;
+use Illuminate\Support\Facades\Auth;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -48,7 +50,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/get-courseFee/{courseId}', [StudentController::class, 'getCourseFee']);
 
 
-    Route::get('/professors', [ProfessorController::class, 'index'])->name('professors.index');
+    Route::get('/professors', [ProffessorContoller::class, 'index'])->name('professors.index');
     
     Route::get('/student_fee_transactions', [StudentFeeTransactionController::class, 'index'])->name('student_fee_transactions.index');
     Route::get('/student_fee_transactions/create', [StudentFeeTransactionController::class, 'create'])->name('student_fee_transactions.create');
@@ -67,7 +69,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');
 
     Route::get('/invoices/pdf/{id}', [InvoiceController::class, 'generatePDF'])->name('invoices.pdf');
+    
+    Route::get('/student-personal-invoices', [InvoiceController::class, 'studentInvoices'])->middleware('role:Student')->name('invoices.personal');
+    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->middleware('auth')->name('logout');
 
-});
-
+});    
+    
 require __DIR__ . '/auth.php';

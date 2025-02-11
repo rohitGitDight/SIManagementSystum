@@ -20,6 +20,10 @@
         td { font-size: 8px; }
         .footer { text-align: center; margin-top: 20px; font-size: 10px; color: #666; border-top: 1px solid #2c3e50; padding-top: 5px; }
         .red-text { color: red; }
+        .highlight-row {
+            background-color: #ffff99 !important; /* Light yellow highlight */
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -48,7 +52,7 @@
                 </tr>
                 
                 @foreach($paymentDetailsArray as $paymentDetails)
-                <tr>
+                <tr class="{{ $loop->last ? 'highlight-row' : '' }}">
                     <td>{{ $invoice->user->name }}</td>
                     <td>{{ $invoice->course->name_of_course }}</td>
                     <td>{{ ucfirst($paymentDetails['transaction_type']) }}</td>

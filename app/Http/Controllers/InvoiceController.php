@@ -52,4 +52,10 @@ class InvoiceController extends Controller
         return $pdf->download('invoice_' . $invoice->id . '.pdf');
     }
 
+
+    public function studentInvoices()
+    {
+        return 'here';
+    }
+
 }

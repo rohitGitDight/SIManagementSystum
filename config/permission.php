@@ -61,6 +61,7 @@ return [
          */
 
         'model_has_roles' => 'model_has_roles',
+        'cache_expiration_time' => 0, // Set to 0 to disable cache
 
         /*
          * When using the "HasRoles" trait from this package, we need to know which

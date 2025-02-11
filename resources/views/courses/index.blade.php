@@ -7,7 +7,11 @@
                 <h2>Course Management</h2>
             </div>
             <div class="pull-right">
-                <a class="btn btn-success mb-2" href="{{ route('courses.create') }}"><i class="fa fa-plus"></i> Add New</a>
+                @can('add course') <!-- Ensuring only users with 'add course' permission can see this button -->
+                    <a class="btn btn-success mb-2" href="{{ route('courses.create') }}">
+                        <i class="fa fa-plus"></i> Add New
+                    </a>
+                @endcan
             </div>
         </div>
     </div>
@@ -24,7 +28,7 @@
             </div> --}}
             <div class="card-body">
                 <div class="table-responsive">
-                    <table id="multi-filter-select" class="display table table-striped table-hover">
+                    {{-- <table id="multi-filter-select" class="display table table-striped table-hover">
                         <thead>
                             <tr>
                                 <th>No</th>
@@ -60,7 +64,59 @@
                                 </tr>
                             @endforeach
                         </tbody>
+                    </table> --}}
+                    <table id="multi-filter-select" class="display table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Name</th>
+                                <th>Duration</th>
+                                <th>Fee</th>
+                                <th>Batches</th>
+                                @canany(['view course', 'edit course', 'delete course'])
+                                    <th width="280px">Action</th>
+                                @endcanany
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($data as $key => $course)
+                                <tr>
+                                    <td>{{ ++$i }}</td>
+                                    <td>{{ $course->name_of_course }}</td>
+                                    <td>{{ $course->duration }}</td>
+                                    <td>{{ $course->fee }}</td>
+                                    <td>{{ $course->batches }}</td>
+                    
+                                    @canany(['view course', 'edit course', 'delete course'])
+                                        <td>
+                                            @can('view course')
+                                                <a class="btn btn-info btn-sm" href="{{ route('courses.show', $course->id) }}">
+                                                    <i class="fa-solid far fa-eye"></i>
+                                                </a>
+                                            @endcan
+                    
+                                            @can('edit course')
+                                                <a class="btn btn-primary btn-sm" href="{{ route('courses.edit', $course->id) }}">
+                                                    <i class="fa-solid far fa-edit"></i>
+                                                </a>
+                                            @endcan
+                    
+                                            @can('delete course')
+                                                <form method="POST" action="{{ route('courses.destroy', $course->id) }}" class="delete-form" style="display:inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="button" class="btn btn-danger btn-sm delete-btn">
+                                                        <i class="fa-solid fas fa-trash-alt"></i>
+                                                    </button>
+                                                </form>
+                                            @endcan
+                                        </td>
+                                    @endcanany
+                                </tr>
+                            @endforeach
+                        </tbody>
                     </table>
+                    
                 </div>
             </div>
         </div>
@@ -77,7 +133,7 @@
                 
                 Swal.fire({
                     title: "Are you sure?",
-                    text: "This action cannot be undone!",
+                    text: "Are you absolutely sure you want to delete this?",
                     icon: "warning",
                     showCancelButton: true,
                     confirmButtonColor: "#d33",

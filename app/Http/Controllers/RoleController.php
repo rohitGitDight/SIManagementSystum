@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -9,6 +10,8 @@ use Illuminate\View\View;
 use DB;
 class RoleController extends Controller
 {
+    use ValidatesRequests;
+    
     public function index(Request $request): View
     {
         $roles = Role::orderBy('id', 'DESC')->paginate(5);

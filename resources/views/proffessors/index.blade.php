@@ -7,10 +7,15 @@
                 <h2>Professor Management</h2>
             </div>
             <div class="pull-right">
-                <a class="btn btn-success mb-2" href="{{ route('proffessors.create') }}"><i class="fa fa-plus"></i> Add New</a>
+                @can('add professor') <!-- Ensuring only users with 'add professor' permission can see this button -->
+                    <a class="btn btn-success mb-2" href="{{ route('proffessors.create') }}">
+                        <i class="fa fa-plus"></i> Add New
+                    </a>
+                @endcan
             </div>
         </div>
     </div>
+
 
     @session('success')
         <div class="alert alert-success" role="alert">
@@ -24,7 +29,7 @@
             </div> --}}
             <div class="card-body">
                 <div class="table-responsive">
-                    <table id="multi-filter-select" class="display table table-striped table-hover">
+                    {{-- <table id="multi-filter-select" class="display table table-striped table-hover">
                         <thead>
                             <tr>
                                 <th>No</th>
@@ -58,7 +63,61 @@
                                 </tr>
                             @endforeach
                         </tbody>
+                    </table> --}}
+                    <table id="multi-filter-select" class="display table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                @canany(['view professor', 'edit professor', 'delete professor'])
+                                    <th width="280px">Action</th>
+                                @endcanany
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($data as $key => $user)
+                                <tr>
+                                    <td>{{ ++$i }}</td>
+                                    <td>{{ $user->userName->name }}</td>
+                                    <td>{{ $user->userName->email }}</td>
+                                    <td>
+                                        {{ $user->userName->roles->pluck('name')->implode(', ') }}
+                                    </td>
+                    
+                                    @canany(['view professor', 'edit professor', 'delete professor'])
+                                        <td>
+                                            @can('view professor')
+                                                <a class="btn btn-info btn-sm"
+                                                    href="{{ route('proffessors.show', $user->userName->id) }}">
+                                                    <i class="fa-solid far fa-eye"></i>
+                                                </a>
+                                            @endcan
+                    
+                                            @can('edit professor')
+                                                <a class="btn btn-primary btn-sm"
+                                                    href="{{ route('proffessors.edit', $user->userName->id) }}">
+                                                    <i class="fa-solid far fa-edit"></i>
+                                                </a>
+                                            @endcan
+                    
+                                            @can('delete professor')
+                                                <form method="POST" action="{{ route('proffessors.destroy', $user->userName->id) }}" class="delete-form" style="display:inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="button" class="btn btn-danger btn-sm delete-btn">
+                                                        <i class="fa-solid fas fa-trash-alt"></i>
+                                                    </button>
+                                                </form>
+                                            @endcan
+                                        </td>
+                                    @endcanany
+                                </tr>
+                            @endforeach
+                        </tbody>
                     </table>
+                    
                 </div>
             </div>
         </div>
@@ -75,7 +134,7 @@
                     
                     Swal.fire({
                         title: "Are you sure?",
-                        text: "This action cannot be undone!",
+                        text: "Are you absolutely sure you want to delete this?",
                         icon: "warning",
                         showCancelButton: true,
                         confirmButtonColor: "#d33",

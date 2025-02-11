@@ -7,12 +7,15 @@
                 <h2>Batch Management</h2>
             </div>
             <div class="pull-right">
-                <a class="btn btn-success mb-2" href="{{ route('batches.create') }}">
-                    <i class="fa fa-plus"></i> Add New
-                </a>
+                @can('add batch') <!-- Ensuring only users with 'add batch' permission can see this button -->
+                    <a class="btn btn-success mb-2" href="{{ route('batches.create') }}">
+                        <i class="fa fa-plus"></i> Add New
+                    </a>
+                @endcan
             </div>
         </div>
     </div>
+
 
     @if (session('success'))
         <div class="alert alert-success" role="alert">
@@ -34,7 +37,9 @@
                                 <th>Course</th>
                                 <th>Batch Start Date</th>
                                 <th>Number Of Students</th>
-                                <th width="280px">Actions</th>
+                                @canany(['view batch', 'edit batch', 'delete batch'])
+                                    <th width="280px">Actions</th>
+                                @endcanany
                             </tr>
                         </thead>
                         <tbody>
@@ -47,29 +52,40 @@
                                     <td>{{ $batch->course->name_of_course }}</td>
                                     <td>{{ $batch->batch_start_date ? $batch->batch_start_date : "-" }}</td>
                                     @php
-                                        $studentCount = \App\Models\UserDetail::where('student_batch' , $batch->id)->count();
+                                        $studentCount = \App\Models\UserDetail::where('student_batch', $batch->id)->count();
                                     @endphp
                                     <td>{{ $studentCount ? $studentCount : '-' }}</td>
-                                    <td>
-                                        <a class="btn btn-info btn-sm" href="{{ route('batches.show', $batch) }}">
-                                            <i class="fa-solid far fa-eye"></i>
-                                        </a>
-                                        <a class="btn btn-primary btn-sm" href="{{ route('batches.edit', $batch) }}">
-                                            <i class="fa-solid far fa-edit"></i>
-                                        </a>
-                                        <form method="POST" action="{{ route('batches.destroy', $batch) }}" class="delete-form" style="display:inline">
-                                            @csrf
-                                            @method('DELETE')
-                                        
-                                            <button type="button" class="btn btn-danger btn-sm delete-btn">
-                                                <i class="fa-solid fas fa-trash-alt"></i>
-                                            </button>
-                                        </form>
-                                    </td>
+                    
+                                    @canany(['view batch', 'edit batch', 'delete batch'])
+                                        <td>
+                                            @can('view batch')
+                                                <a class="btn btn-info btn-sm" href="{{ route('batches.show', $batch) }}">
+                                                    <i class="fa-solid far fa-eye"></i>
+                                                </a>
+                                            @endcan
+                    
+                                            @can('edit batch')
+                                                <a class="btn btn-primary btn-sm" href="{{ route('batches.edit', $batch) }}">
+                                                    <i class="fa-solid far fa-edit"></i>
+                                                </a>
+                                            @endcan
+                    
+                                            @can('delete batch')
+                                                <form method="POST" action="{{ route('batches.destroy', $batch) }}" class="delete-form" style="display:inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="button" class="btn btn-danger btn-sm delete-btn">
+                                                        <i class="fa-solid fas fa-trash-alt"></i>
+                                                    </button>
+                                                </form>
+                                            @endcan
+                                        </td>
+                                    @endcanany
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
+                    
                 </div>
             </div>
         </div>
@@ -85,7 +101,7 @@
                 
                 Swal.fire({
                     title: "Are you sure?",
-                    text: "This action cannot be undone!",
+                    text: "Are you absolutely sure you want to delete this?",
                     icon: "warning",
                     showCancelButton: true,
                     confirmButtonColor: "#d33",

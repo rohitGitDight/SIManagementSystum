@@ -222,6 +222,16 @@ class StudentFeeTransactionController extends Controller {
             $remainingAmount = array_sum(array_column($paymentDetails, 'payment'));
             $studentCourseFee->update([ 'remaining_amount' => $remainingAmount ]);
         }
+
+
+        $data = [
+            'user_id' => $request->user_id,
+            'course_id' => $request->course_id,
+            'amount' => $request->amount,
+            'payment_type' => $request->payment_type
+        ];  
+        
+        $this->adminUpdateInvoice($data);
                 
         return redirect()->route('student_fee_transactions.index')->with('success', 'Fee transaction updated successfully!');
     }
@@ -264,5 +274,43 @@ class StudentFeeTransactionController extends Controller {
             return response()->json(['message' => 'Invoice created successfully', 'invoice' => $invoice], 201);
         }
     }
+
+    public function adminUpdateInvoice($data)
+    {
+        $invoice = Invoice::where('user_id', $data['user_id'])
+            ->where('course_id', $data['course_id'])
+            ->where('payment_type', $data['payment_type'])
+            ->first();
+
+        if (!$invoice) {
+            return response()->json(['error' => 'Invoice not found'], 404);
+        }
+
+        $existingDetails = json_decode($invoice->payment_details, true);
+
+        if (empty($existingDetails)) {
+            return response()->json(['error' => 'No transactions found'], 400);
+        }
+
+        // Get the latest transaction reference for modification
+        $latestIndex = count($existingDetails) - 1;
+        $latestTransaction = &$existingDetails[$latestIndex]; // Reference to modify in place
+
+        $amount = $data['amount']; // New amount from input
+        $previousAmount = $latestTransaction['amount']; // Store previous amount for calculations
+        $remainingAmountCheck = abs($previousAmount - $amount);
+
+        // Update only specific fields, keeping others as they are
+        $latestTransaction['amount'] = $amount;
+        $latestTransaction['pending_amount'] = $latestTransaction['pending_amount'] - $amount + $previousAmount;
+        $latestTransaction['remaining_amount'] = $latestTransaction['remaining_amount'] - $remainingAmountCheck;
+
+        // Save updated details back to the invoice
+        $invoice->payment_details = json_encode($existingDetails);
+        $invoice->save();
+
+        return response()->json(['success' => 'Invoice updated successfully']);
+    }
+
     
 }

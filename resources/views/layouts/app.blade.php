@@ -199,65 +199,109 @@
                             </span>
                             <h4 class="text-section">Menu</h4>
                         </li>
+                        <!-- User Management (HR, Super Admin) -->
+                        @canany(['view student', 'view student list'])
                         <li class="nav-item">
                             <a href="{{ route('students.index') }}">
-                                <i class="fas fa-layer-group"></i>
-                                <p>User Managment</p>
-                                {{-- <span class="badge badge-success">4</span> --}}
+                                <i class="fas fa-users"></i>
+                                <p>User Management</p>
                             </a>
                         </li>
+                        @endcanany
+
+                        <!-- Role Management (Super Admin Only) -->
+                        @canany(['view role', 'view role list'])
                         <li class="nav-item">
-                            <a href="{{ route(name: 'roles.index') }}">
-                                <i class="fas fa-layer-group"></i>
-                                <p>Role Managment</p>
-                                {{-- <span class="badge badge-success">4</span> --}}
+                            <a href="{{ route('roles.index') }}">
+                                <i class="fas fa-user-shield"></i>
+                                <p>Role Management</p>
                             </a>
                         </li>
+                        @endcanany
+
+                        <!-- Batch Management (HR, Super Admin, Professor (View Only)) -->
+                        @canany(['view batch', 'view batch list'])
                         <li class="nav-item">
-                            <a href="{{ route(name: 'batches.index') }}">
+                            <a href="{{ route('batches.index') }}">
                                 <i class="fas fa-layer-group"></i>
                                 <p>Batches</p>
-                                {{-- <span class="badge badge-success">4</span> --}}
                             </a>
                         </li>
+                        @endcanany
+
+                        <!-- Course Management (HR, Super Admin, Professor (View Only)) -->
+                        @canany(['view course', 'view course list'])
                         <li class="nav-item">
-                            <a href="{{ route(name: 'courses.index') }}">
-                                <i class="fas fa-layer-group"></i>
+                            <a href="{{ route('courses.index') }}">
+                                <i class="fas fa-book"></i>
                                 <p>Courses</p>
-                                {{-- <span class="badge badge-success">4</span> --}}
                             </a>
                         </li>
+                        @endcanany
+
+                        <!-- Professor Management (HR, Super Admin, Professor (View Only)) -->
+                        @canany(['view professor', 'view professor list'])
                         <li class="nav-item">
-                            <a href="{{ route('proffessors.index') }}">
-                                <i class="fas fa-layer-group"></i>
-                                <p>Professor Managment</p>
-                                {{-- <span class="badge badge-success">4</span> --}}
+                            <a href="{{ route('professors.index') }}">
+                                <i class="fas fa-chalkboard-teacher"></i>
+                                <p>Professor Management</p>
                             </a>
                         </li>
+                        @endcanany
+
+                        <!-- Student Fee Transactions (HR, Super Admin) -->
+                        @can('view student fee transactions')
                         <li class="nav-item">
                             <a href="{{ route('student_fee_transactions.index') }}">
                                 <i class="fas fa-money-check-alt"></i>
                                 <p>Student Fee Transactions</p>
                             </a>
                         </li>
+                        @endcan
+
+                        <!-- Student Course Fees (HR, Super Admin) -->
+                        @canany(['view student course fees', 'add student course fees'])
                         <li class="nav-item">
                             <a href="{{ route('student_course_fees.index') }}">
-                                <i class="fas fa-money-check-alt"></i>
+                                <i class="fas fa-wallet"></i>
                                 <p>Student Course Fees</p>
                             </a>
                         </li>
+                        @endcanany
+
+                        <!-- Payment Calendar (HR, Super Admin, Professor, Student) -->
+                        @can('view student payment calendar')
                         <li class="nav-item">
                             <a href="{{ route('student_course_fees.calendar') }}">
                                 <i class="fas fa-calendar-alt"></i>
                                 <p>Payment Calendar</p>
                             </a>
-                        </li>                        
+                        </li>
+                        @endcan
+
+                        <!-- Invoice Management (HR, Super Admin) -->
+                        @can('view invoice list')
                         <li class="nav-item">
                             <a href="{{ route('invoices.index') }}">
                                 <i class="fas fa-file-invoice"></i>
                                 <p>Invoices</p>
                             </a>
-                        </li>                        
+                        </li>
+                        @endcan
+
+                        <!-- Personal Invoices (Students Only) -->
+                        @can('view student personal invoice list')
+                            @if(auth()->user()->hasRole('Student'))
+                                <li class="nav-item">
+                                    <a href="{{ route('invoices.personal') }}">
+                                        <i class="fas fa-receipt"></i>
+                                        <p>My Invoices</p>
+                                    </a>
+                                </li>
+                            @endif
+                        @endcan
+
+                                            
                         {{-- <li class="nav-item">
                             <a data-bs-toggle="collapse" href="#base">
                                 <i class="fas fa-layer-group"></i>
@@ -773,7 +817,7 @@
                                             <div class="dropdown-divider"></div> --}}
                                             <a class="dropdown-item" href="#">Account Setting</a>
                                             <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Logout</a>
+                                            <a class="dropdown-item" href="#"> Logout</a>
                                         </li>
                                     </div>
                                 </ul>
