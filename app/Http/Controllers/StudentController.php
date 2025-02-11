@@ -22,6 +22,11 @@ class StudentController extends Controller
 {
     //
     public function index(Request $request): View{
+
+        if (!Auth::user()->hasPermissionTo('view student list')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         // Fetch only active users and paginate
         $data1 = Model_has_role::where('role_id', 4)->orderBy('model_id', 'desc')->pluck('model_id');
         $data = User::whereIn("id", $data1)->where('is_active', 1)->latest()->paginate(5);
@@ -38,6 +43,11 @@ class StudentController extends Controller
      */
 
     public function create(){
+        
+        if (!Auth::user()->hasPermissionTo('add student')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         // Fetch courses from the 'courses' table
         $courses = Course::where('is_active', 1)->get();
 
@@ -54,6 +64,11 @@ class StudentController extends Controller
      */
 
     public function store(Request $request){
+
+        if (!Auth::user()->hasPermissionTo('add student')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         // Define validation rules
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
@@ -144,6 +159,11 @@ class StudentController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($id): View{
+
+        if (!Auth::user()->hasPermissionTo('view student')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         // Retrieve the user along with their details using Eloquent's `with` method.
         $user = User::with('details')->findOrFail($id);
         $userDetail = UserDetail::where('user_id', $id)->firstOrFail();
@@ -170,6 +190,11 @@ class StudentController extends Controller
      */
 
     public function edit($id){
+
+        if (!Auth::user()->hasPermissionTo('edit student')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         // Fetch the user by ID
         $user = User::findOrFail($id);
         $userDetail = UserDetail::where('user_id', $id)->firstOrFail();
@@ -197,6 +222,11 @@ class StudentController extends Controller
      */
 
     public function update(Request $request, $id){
+
+        if (!Auth::user()->hasPermissionTo('edit student')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         // Validate input
         $request->validate([
             'name' => 'required',
@@ -272,6 +302,11 @@ class StudentController extends Controller
      */
     public function destroy($id)
     {
+
+        if (!Auth::user()->hasPermissionTo('delete student')) {
+            abort(403, 'Unauthorized action.');
+        }
+        
         // Find the user by ID
         $user = User::find($id);
         
@@ -293,6 +328,7 @@ class StudentController extends Controller
 
     public function getBatches($courseId)
     {
+        
         // Fetch batches for the selected course
         $batches = Batch::where('course_id', $courseId)->get();
 

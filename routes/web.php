@@ -70,7 +70,10 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/invoices/pdf/{id}', [InvoiceController::class, 'generatePDF'])->name('invoices.pdf');
     
-    Route::get('/student-personal-invoices', [InvoiceController::class, 'studentInvoices'])->middleware('role:Student')->name('invoices.personal');
+    Route::get('/student-personal-invoices', [InvoiceController::class, 'studentInvoices'])
+    ->middleware('role:Student')
+    ->name('invoices.personal');
+
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->middleware('auth')->name('logout');
 
 });    

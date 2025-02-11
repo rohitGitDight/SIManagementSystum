@@ -85,7 +85,10 @@
                                     <td>{{ $course->name_of_course }}</td>
                                     <td>{{ $course->duration }}</td>
                                     <td>{{ $course->fee }}</td>
-                                    <td>{{ $course->batches }}</td>
+                                    <?php 
+                                    $batchcount = \App\Models\Batch::where('course_id' , $course->id)->count();
+                                    ?>
+                                    <td>{{ $batchcount }}</td>
                     
                                     @canany(['view course', 'edit course', 'delete course'])
                                         <td>

@@ -63,13 +63,13 @@
                 </div>
             </div>
 
-            <div class="col-md-6">
+            {{-- <div class="col-md-6">
                 <div class="form-group">
                     <label><strong>Batches:</strong></label>
                     <input type="number" name="batches" class="form-control" placeholder="Number of Batches"
                         value="{{ old('batches', $course->batches) }}">
                 </div>
-            </div>
+            </div> --}}
 
             <div class="col-md-6">
                 <div class="form-group">

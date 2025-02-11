@@ -10,11 +10,18 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
 use App\Models\Course;
+use Illuminate\Support\Facades\Auth;
+
 
 class ProffessorContoller extends Controller
 {
     public function index(Request $request): View
     {
+
+        if (!Auth::user()->hasPermissionTo('view professor list')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         // Fetch only active users and paginate
         $data = Model_has_role::whereIn('role_id', [2, 3])->orderBy('model_id', 'desc')->with("userName", "userDetail")->paginate(5);
 
@@ -29,6 +36,10 @@ class ProffessorContoller extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create(){
+
+        if (!Auth::user()->hasPermissionTo('add professor')) {
+            abort(403, 'Unauthorized action.');
+        }
         // Fetch courses from the 'courses' table
         $courses = Course::all();
 
@@ -45,6 +56,11 @@ class ProffessorContoller extends Controller
 
     public function store(Request $request): RedirectResponse
     {
+
+        if (!Auth::user()->hasPermissionTo('add professor')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         // Define validation rules
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
@@ -113,6 +129,11 @@ class ProffessorContoller extends Controller
      */
     public function show($id): View
     {
+
+        if (!Auth::user()->hasPermissionTo('view professor')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         // Retrieve the user along with their details using Eloquent's `with` method.
         $user = User::with('details')->findOrFail($id);
 
@@ -129,6 +150,10 @@ class ProffessorContoller extends Controller
 
     public function edit($id): View
     {
+        if (!Auth::user()->hasPermissionTo('edit professor')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         // Retrieve the user and their details using the relationship
         $user = User::with('details')->findOrFail($id);
         $courses = Course::all();
@@ -146,6 +171,11 @@ class ProffessorContoller extends Controller
 
     public function update(Request $request, $id): RedirectResponse
     {
+        
+        if (!Auth::user()->hasPermissionTo('edit professor')) {
+            abort(403, 'Unauthorized action.');
+        }
+        
         // Validate input
         $request->validate([
             'name' => 'required|string|max:255',
@@ -197,6 +227,11 @@ class ProffessorContoller extends Controller
      */
     public function destroy($id): RedirectResponse
     {
+
+        if (!Auth::user()->hasPermissionTo('delete professor')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         // Find the user by ID
         $user = User::find($id);
 

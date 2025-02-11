@@ -9,12 +9,17 @@ use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 
 
 class CoursesController extends Controller
 {
     public function index(Request $request)
     {
+        if (!Auth::user()->hasPermissionTo('view course list')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $data = Course::where('is_active', 1)->get();
 
         return view('courses.index', compact('data'))
@@ -29,6 +34,10 @@ class CoursesController extends Controller
      */
     public function create()
     {
+        if (!Auth::user()->hasPermissionTo('add course')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $data1 = Model_has_role::where('role_id', 3)->orderBy('model_id', 'desc')->pluck('model_id');
         $professors = User::whereIn("id", $data1)->where('is_active', 1)->latest()->paginate(5);
         return view('courses.create', compact('professors'));
@@ -43,12 +52,19 @@ class CoursesController extends Controller
 
     public function store(Request $request)
     {
+        if (!Auth::user()->hasPermissionTo('add course')) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $request->merge([
+            'batches' => $request->input('batches', 0) // Default to 0 if not provided
+        ]);
+        
         $validator = Validator::make($request->all(), [
             'name_of_course' => 'required|string|max:255',
             'duration' => 'required|string|max:255',
             'fee' => 'required|numeric|min:0',
             'professor' => 'required|string|max:255',
-            'batches' => 'required|integer|min:1',
             'installment_cycle' => 'required|integer'
         ]);
 
@@ -73,6 +89,11 @@ class CoursesController extends Controller
      */
     public function show($id): View
     {
+
+        if (!Auth::user()->hasPermissionTo('view course')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $course = Course::findOrFail($id);
         $data1 = Model_has_role::where('role_id', 3)->orderBy('model_id', 'desc')->pluck('model_id');
         $professor = User::where('is_active', 1)->where('id' , $course->professor)->first();
@@ -90,6 +111,11 @@ class CoursesController extends Controller
 
     public function edit($id): View
     {
+
+        if (!Auth::user()->hasPermissionTo('edit course')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $course = Course::findOrFail($id);
 
         return view('courses.edit', compact('course'));
@@ -106,13 +132,17 @@ class CoursesController extends Controller
 
     public function update(Request $request, $id): RedirectResponse
     {
+
+        if (!Auth::user()->hasPermissionTo('edit course')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         // Validate input
         $request->validate([
             'name_of_course' => 'required|string|max:255',
             'duration' => 'required|string|max:255',
             'fee' => 'required|numeric|min:0',
             'professor' => 'required|string|max:255',
-            'batches' => 'required|integer|min:1',
             'installment_cycle' => 'required|integer' // Accepts any string input
         ]);
 
@@ -123,7 +153,6 @@ class CoursesController extends Controller
             'duration' => $request->duration,
             'fee' => $request->fee,
             'professor' => $request->professor,
-            'batches' => $request->batches,
             'installment_cycle' => $request->installment_cycle
         ]);
 
@@ -140,6 +169,11 @@ class CoursesController extends Controller
      */
     public function destroy($id)
     {
+
+        if (!Auth::user()->hasPermissionTo('delete course')) {
+            abort(403, 'Unauthorized action.');
+        }
+        
         $courses = Course::find($id);
 
         $whereCourseID = array('course_id' => $id);

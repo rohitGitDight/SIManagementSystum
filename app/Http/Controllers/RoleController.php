@@ -8,12 +8,19 @@ use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Illuminate\View\View;
 use DB;
+use Illuminate\Support\Facades\Auth;
+
 class RoleController extends Controller
 {
     use ValidatesRequests;
     
     public function index(Request $request): View
     {
+
+        if (!Auth::user()->hasPermissionTo('view role list')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $roles = Role::orderBy('id', 'DESC')->paginate(5);
         return view('roles.index', compact('roles'))
             ->with('i', ($request->input('page', 1) - 1) * 5);
@@ -26,6 +33,7 @@ class RoleController extends Controller
      */
     public function create(): View
     {
+
         $permission = Permission::get();
         return view('roles.create', compact('permission'));
     }
@@ -38,6 +46,11 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
+
+        if (!Auth::user()->hasPermissionTo('add role')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $this->validate($request, [
             'name' => 'required|unique:roles,name',
             'permission' => 'required',
@@ -64,6 +77,10 @@ class RoleController extends Controller
      */
     public function show($id): View
     {
+        if (!Auth::user()->hasPermissionTo('view role')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $role = Role::find($id);
         $rolePermissions = Permission::join("role_has_permissions", "role_has_permissions.permission_id", "=", "permissions.id")
             ->where("role_has_permissions.role_id", $id)
@@ -80,6 +97,11 @@ class RoleController extends Controller
      */
     public function edit($id): View
     {
+
+        if (!Auth::user()->hasPermissionTo('edit role')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $role = Role::find($id);
         $permission = Permission::get();
         $rolePermissions = DB::table("role_has_permissions")->where("role_has_permissions.role_id", $id)
@@ -98,6 +120,10 @@ class RoleController extends Controller
      */
     public function update(Request $request, $id)
     {
+        if (!Auth::user()->hasPermissionTo('edit role')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $this->validate($request, [
             'name' => 'required',
             'permission' => 'required',
@@ -127,6 +153,10 @@ class RoleController extends Controller
      */
     public function destroy($id)
     {
+        if (!Auth::user()->hasPermissionTo('delete role')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         DB::table("roles")->where('id', $id)->delete();
         return redirect()->route('roles.index')
             ->with('success', 'Role deleted successfully');

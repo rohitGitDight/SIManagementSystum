@@ -6,10 +6,23 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Course;
 use App\Models\StudentCourseFee;
+use Illuminate\Support\Facades\Auth;
+
 
 class CalendarController extends Controller
 {
+    public function __construct()
+    {
+        if (!Auth::check()) {
+            abort(403, 'Unauthorized action.');
+        }
 
+        if (!Auth::user()->hasPermissionTo('view student payment calendar')) {
+            abort(403, 'Unauthorized action.');
+        }
+    }
+
+    
     public function index()
     {
         // Fetch payment details from the database
@@ -59,10 +72,6 @@ class CalendarController extends Controller
 
         return view('calendar', compact('paymentDates'));
     }
-
-    
-
-
 
 }
 

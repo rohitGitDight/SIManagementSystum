@@ -6,23 +6,39 @@ use Illuminate\Http\Request;
 use App\Models\Batch;
 use App\Models\Course;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+
 
 class BatchController extends Controller
 {
     public function index()
     {
+
+        if (!Auth::user()->hasPermissionTo('view batch list')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $batches = Batch::with('course')->get();
         return view('batches.index', compact('batches'));
     }
 
     public function create()
     {
+        if (!Auth::user()->hasPermissionTo('add batch')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $courses = Course::all();
         return view('batches.create', compact('courses'));
     }
 
     public function store(Request $request)
     {
+
+        if (!Auth::user()->hasPermissionTo('add batch')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $request->validate([
             'batch_name' => 'required|string|max:255',
             'start_time' => 'required|date_format:H:i', // Validate start time
@@ -37,12 +53,21 @@ class BatchController extends Controller
 
     public function edit(Batch $batch)
     {
+
+        if (!Auth::user()->hasPermissionTo('edit batch')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $courses = Course::all();
         return view('batches.edit', compact('batch', 'courses'));
     }
     
     public function update(Request $request, Batch $batch)
     {
+        if (!Auth::user()->hasPermissionTo('edit batch')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $request->validate([
             'batch_name' => 'required|string|max:255',
             'start_time' => 'required|date_format:H:i',
@@ -59,12 +84,20 @@ class BatchController extends Controller
 
     public function destroy(Batch $batch)
     {
+        if (!Auth::user()->hasPermissionTo('delete batch')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $batch->delete();
         return redirect()->route('batches.index')->with('success', 'Batch deleted successfully.');
     }
 
     public function show($id)
     {
+        if (!Auth::user()->hasPermissionTo('view batch')) {
+            abort(403, 'Unauthorized action.');
+        }
+        
         $batch = Batch::with('course')->findOrFail($id);
         return view('batches.show', compact('batch'));
     }

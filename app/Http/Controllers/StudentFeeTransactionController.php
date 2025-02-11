@@ -11,15 +11,27 @@ use App\Models\Model_has_role;
 use App\Models\StudentCourseFee;
 use App\Models\Invoice;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
+
 
 class StudentFeeTransactionController extends Controller {
 
     public function index() {
+
+        if (!Auth::user()->hasPermissionTo('view student fee transactions')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $transactions = StudentFeeTransaction::with('student', 'course')->get();
         return view('student_fee_transactions.index', compact('transactions'));
     }
 
     public function create() {
+
+        if (!Auth::user()->hasPermissionTo('add student course fees')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $studentIds = Model_has_role::where('role_id', 4)->pluck('model_id');
     
         $students = User::whereIn('id', $studentIds)->get();
@@ -34,6 +46,11 @@ class StudentFeeTransactionController extends Controller {
     }
     
     public function store(Request $request) {
+
+        if (!Auth::user()->hasPermissionTo('add student course fees')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $validator = Validator::make($request->all(), [
             'user_id' => 'required|exists:users,id',
             'course_id' => 'required|exists:courses,id',
@@ -160,6 +177,11 @@ class StudentFeeTransactionController extends Controller {
 
     public function edit($id)
     {
+
+        if (!Auth::user()->hasPermissionTo('edit student fee transaction')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         // Get the student IDs who have the role of 'student' (role_id = 4)
         $studentIds = Model_has_role::where('role_id', 4)->pluck('model_id');
 
@@ -182,6 +204,10 @@ class StudentFeeTransactionController extends Controller {
     }
 
     public function update(Request $request, $id) {
+
+        if (!Auth::user()->hasPermissionTo('edit student fee transaction')) {
+            abort(403, 'Unauthorized action.');
+        }
 
         $validator = Validator::make($request->all(), [
             'amount' => 'required|numeric|min:0'

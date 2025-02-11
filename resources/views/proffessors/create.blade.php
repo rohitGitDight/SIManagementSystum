@@ -4,7 +4,7 @@
     <div class="row">
         <div class="col-lg-12 margin-tb d-flex justify-content-between">
             <div class="pull-left">
-                <h2>Create New</h2>
+                <h2>Create Professor or HR New</h2>
             </div>
             <div class="pull-right">
                 <a class="btn btn-primary btn-sm mb-2" href="{{ route('proffessors.index') }}"><i class="fa fa-arrow-left"></i>

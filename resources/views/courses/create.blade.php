@@ -58,13 +58,13 @@
                     </select>
                 </div>
             </div>
-            <div class="col-xs-12 col-sm-12 col-md-6">
+            {{-- <div class="col-xs-12 col-sm-12 col-md-6">
                 <div class="form-group">
                     <strong>Batches:</strong>
                     <input type="number" name="batches" placeholder="Number of Batches" class="form-control"
                         value="{{ old('batches') }}">
                 </div>
-            </div>
+            </div> --}}
 
             <div class="col-xs-12 col-sm-12 col-md-6">
                 <div class="form-group">
