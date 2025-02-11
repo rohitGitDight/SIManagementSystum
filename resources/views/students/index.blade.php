@@ -4,7 +4,7 @@
     <div class="row">
         <div class="col-lg-12 margin-tb d-flex justify-content-between">
             <div class="pull-left">
-                <h2>Users Management</h2>
+                <h2>Students Management</h2>
             </div>
             <div class="pull-right">
                 @can('add student') <!-- Ensuring only users with 'add student' permission can see this button -->

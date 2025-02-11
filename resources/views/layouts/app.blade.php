@@ -200,11 +200,12 @@
                             <h4 class="text-section">Menu</h4>
                         </li>
                         <!-- User Management (HR, Super Admin) -->
+
                         @canany(['view student', 'view student list'])
                         <li class="nav-item">
                             <a href="{{ route('students.index') }}">
                                 <i class="fas fa-users"></i>
-                                <p>User Management</p>
+                                <p>Student Management</p>
                             </a>
                         </li>
                         @endcanany

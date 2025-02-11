@@ -29,7 +29,7 @@ class StudentController extends Controller
 
         // Fetch only active users and paginate
         $data1 = Model_has_role::where('role_id', 4)->orderBy('model_id', 'desc')->pluck('model_id');
-        $data = User::whereIn("id", $data1)->where('is_active', 1)->latest()->paginate(5);
+        $data = User::whereIn("id", $data1)->where('is_active', 1)->get();
 
         return view('students.index', compact('data'))
             ->with('i', ($request->input('page', 1) - 1) * 5);
